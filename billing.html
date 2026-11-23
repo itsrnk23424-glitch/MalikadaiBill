@@ -167,13 +167,13 @@
 
   /* Hidden PDF Container - Compact Receipt Format */
   #billPreview {
-    position: fixed; left: -10000px; top: 0; width: 420px; background: white;
-    padding: 12px; font-family: 'Noto Sans Tamil', Arial, sans-serif; color: #000;
+    position: fixed; left: -10000px; top: 0; width: 450px; background: white;
+    padding: 16px; font-family: 'Noto Sans Tamil', Arial, sans-serif; color: #000;
     z-index: -9999; opacity: 0; pointer-events: none;
   }
   #billPreview table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-  #billPreview th { background: #fff; color: #111; padding: 4px 6px; font-size: 13px; text-align: left; border-bottom: 1px solid #444; }
-  #billPreview td { padding: 4px 6px; border-bottom: 1px solid #ddd; font-size: 13px; }
+  #billPreview th { background: #1e293b; color: white; padding: 6px; font-size: 12px; text-align: left; }
+  #billPreview td { padding: 6px; border-bottom: 1px solid #ddd; font-size: 12px; }
   /* Rate Editing Modal Styling */
   /* Rate Editing Styling */
   .btn-rate-open {
@@ -1136,35 +1136,36 @@ function generatePDF() {
 
   const previewEl = document.getElementById('billPreview');
   previewEl.innerHTML = `
-    <div style="text-align:center;margin-bottom:8px;border-bottom:1px solid #333;padding-bottom:5px">
-      <h2 style="font-size:18px;margin:0;color:#000">மளிகை கடை பில் | Malikadai Bill</h2>
+    <div style="text-align:center;margin-bottom:12px;border-bottom:2px solid #333;padding-bottom:6px">
+      <h2 style="font-size:20px;margin:0;color:#000">🛒 பில் ரசீது</h2>
+      <p style="font-size:12px;color:#333;margin:4px 0 0 0">தேதி: ${escapeReceiptText(billDate)}</p>
     </div>
-    <div style="display:flex;justify-content:space-between;margin-bottom:7px;font-size:13px;color:#000">
+    <div style="display:flex;justify-content:space-between;margin-bottom:12px;font-size:13px;color:#000">
       <div><strong>வாடிக்கையாளர்:</strong> ${escapeReceiptText(custName)}</div>
       <div><strong>தேதி:</strong> ${escapeReceiptText(billDate)}</div>
     </div>
-    <table style="width:100%;border-collapse:collapse;margin-top:4px">
+    <table style="width:100%;border-collapse:collapse;margin-top:10px">
       <thead>
-        <tr style="border-bottom:1px solid #444;color:#000">
-          <th style="padding:4px 6px;text-align:left;font-size:13px">#</th>
-          <th style="padding:4px 6px;text-align:left;font-size:13px">பொருள்</th>
-          <th style="padding:4px 6px;text-align:center;font-size:13px">அளவு</th>
-          <th style="padding:4px 6px;text-align:right;font-size:13px">மொத்தம்</th>
+        <tr style="background:#1e293b;color:#fff">
+          <th style="padding:6px 8px;text-align:left;font-size:13px">#</th>
+          <th style="padding:6px 8px;text-align:left;font-size:13px">பொருள்</th>
+          <th style="padding:6px 8px;text-align:center;font-size:13px">அளவு</th>
+          <th style="padding:6px 8px;text-align:right;font-size:13px">மொத்தம்</th>
         </tr>
       </thead>
       <tbody>
         ${activeItems.map((item, idx) => `
           <tr style="border-bottom:1px solid #ddd;color:#000">
-            <td style="padding:4px 6px;font-size:13px">${idx + 1}</td>
-            <td style="padding:4px 6px;font-size:13px"><strong>${escapeReceiptText(item.name)}</strong></td>
-            <td style="padding:4px 6px;text-align:center;font-size:13px;font-weight:bold">${formatAlavuPDF(item.qty, item.unit)}</td>
-            <td style="padding:4px 6px;text-align:right;font-size:13px;font-weight:bold">₹${item.total.toFixed(2)}</td>
+            <td style="padding:6px 8px;font-size:13px">${idx + 1}</td>
+            <td style="padding:6px 8px;font-size:13px"><strong>${escapeReceiptText(item.name)}</strong></td>
+            <td style="padding:6px 8px;text-align:center;font-size:13px;font-weight:bold">${formatAlavuPDF(item.qty, item.unit)}</td>
+            <td style="padding:6px 8px;text-align:right;font-size:13px;font-weight:bold">₹${item.total.toFixed(2)}</td>
           </tr>
         `).join('')}
       </tbody>
     </table>
 
-    <div style="margin-top:9px;width:245px;margin-left:auto;font-size:12px;color:#000">
+    <div style="margin-top:16px;width:260px;margin-left:auto;font-size:12px;color:#000">
       <div style="display:flex;justify-content:space-between;padding:3px 0"><span>மொத்தம்:</span> <span>₹${subtotal.toFixed(2)}</span></div>
       ${oldBal > 0 ? `<div style="display:flex;justify-content:space-between;padding:2px 0"><span>பழைய பாக்கி:</span> <span>₹${oldBal.toFixed(2)}</span></div>` : ''}
       <div style="display:flex;justify-content:space-between;font-weight:bold;font-size:14px;border-top:1.5px solid #000;padding-top:4px;margin-top:2px">
@@ -1178,11 +1179,9 @@ function generatePDF() {
   `;
 
   html2canvas(previewEl, {
-    // Fixed device-independent capture size; higher screen density must not
-    // make the shared PDF larger. Smaller than the former 1.5x capture.
-    scale: window.COMPACT_RECEIPT_SETTINGS?.captureScale || 1.2,
+    scale: 1.5,
     useCORS: true,
-    allowTaint: false,
+    allowTaint: true,
     backgroundColor: '#ffffff',
     onclone: (clonedDoc) => {
       const clonedPreview = clonedDoc.getElementById('billPreview');
@@ -1196,9 +1195,10 @@ function generatePDF() {
       }
     }
   }).then(async canvas => {
-    const receipt = window.compressReceiptCanvas(canvas);
-    const { imageData: imgData, pdfWidthMm: pdfWidth, pdfHeightMm: pdfHeight } = receipt;
+    const imgData = canvas.toDataURL('image/jpeg', 0.80);
     const jsPDF = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+    const pdfWidth = 90;
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
     const pdf = new jsPDF({
       orientation: 'p',
       unit: 'mm',

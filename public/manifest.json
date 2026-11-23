@@ -1,0 +1,23 @@
+{
+  "name": "Malikadai Bill | மளிகை கடை பில்",
+  "short_name": "Malikadai Bill",
+  "description": "Personal grocery-shop billing with Tamil support and local item/rate editing.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

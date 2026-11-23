@@ -1,0 +1,93 @@
+# Personal Android APK build. Automatically builds on main updates; can also run manually.
+name: Build Malikadai Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-debug-apk:
+    name: Build and test Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Get project code
+        uses: actions/checkout@v7
+
+      - name: Check project files are at repository root
+        shell: bash
+        run: |
+          test -f package.json || { echo 'ERROR: Upload project CONTENTS to repository root, not a parent folder or ZIP.'; exit 1; }
+          test -f index.html
+          test -f billing.html
+          test -f rates.html
+          test -f src/mobile-bridge.js
+          test -f scripts/prepare-android-manifest.mjs
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          package-manager-cache: false
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      # v4 fixes the removed Android SDK 'tools' package failure in v3.
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
+
+      - name: Install JavaScript dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Run voice billing and Android checks
+        run: npm run verify
+
+      - name: Build offline-ready app pages
+        run: npm run build
+
+      - name: Generate Android native project
+        run: npx cap add android
+
+      - name: Generate store icon and splash assets
+        run: npx @capacitor/assets generate --android
+
+      - name: Synchronize Android plugins and app pages
+        run: npx cap sync android
+
+      - name: Add and verify microphone/recognizer permissions
+        run: node scripts/prepare-android-manifest.mjs
+
+      - name: Compile installable Android debug APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Verify APK and generate integrity checksum
+        shell: bash
+        run: |
+          test -s android/app/build/outputs/apk/debug/app-debug.apk
+          cd android/app/build/outputs/apk/debug
+          sha256sum app-debug.apk > app-debug.apk.sha256
+          ls -lh app-debug.apk app-debug.apk.sha256
+
+      - name: Provide APK download
+        uses: actions/upload-artifact@v6
+        with:
+          name: MalikadaiBill-Android-APK
+          path: |
+            android/app/build/outputs/apk/debug/app-debug.apk
+            android/app/build/outputs/apk/debug/app-debug.apk.sha256
+          if-no-files-found: error
+          retention-days: 14
