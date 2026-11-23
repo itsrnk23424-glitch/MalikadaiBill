@@ -14,7 +14,7 @@ for (const filename of ['index.html', 'billing.html']) {
   test(`${filename} correctly renders both short and long receipt page sizes`, () => {
     assert.match(source, /const pdfWidth = 90;/);
     assert.match(source, /orientation:\s*pdfHeight >= pdfWidth \? 'portrait' : 'landscape'/);
-    assert.match(source, /pdf\.addImage\(imgData, 'JPEG', margin, margin, imageWidth, imageHeight/);
+    assert.match(source, /pdf\.addImage\(data\.imgData, 'JPEG', margin, margin, imageWidth, imageHeight/);
     assert.match(source, /canvas\.toDataURL\('image\/jpeg', 0\.80\)/);
   });
 }

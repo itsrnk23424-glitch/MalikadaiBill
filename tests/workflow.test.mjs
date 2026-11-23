@@ -26,7 +26,7 @@ test('original 2.2 receipt generator remains, without compact 2.3 additions', ()
     const file = readFileSync(filename, 'utf8');
     assert.match(file, /function generatePDF\(\)/);
     assert.match(file, /const pdfWidth = 90;/);
-    assert.match(file, /const imgData = canvas\.toDataURL\('image\/jpeg', 0\.80\);/);
+    assert.match(file, /imgData: canvas\.toDataURL\('image\/jpeg', 0\.80\)/);
     assert.doesNotMatch(file, /compact\.jpg/);
   }
 });

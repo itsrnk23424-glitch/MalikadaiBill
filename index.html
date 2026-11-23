@@ -7,7 +7,7 @@
 <!-- PWA Meta -->
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="./icon-180.png">
-<meta name="theme-color" content="#4f46e5">
+<meta name="theme-color" content="#2563eb">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
@@ -16,8 +16,8 @@
 
 <style>
   :root {
-    --primary: #4f46e5;
-    --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    --primary: #2563eb;
+    --primary-gradient: linear-gradient(135deg, #2563eb 0%, #0284c7 100%);
     --accent: #10b981;
     --accent-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
     --danger: #ef4444;
@@ -56,7 +56,7 @@
 
   /* Live Dictation Banner */
   .dictation-banner {
-    background: #1e1b4b; color: white; border-radius: var(--radius); padding: 14px;
+    background: #0f2d59; color: white; border-radius: var(--radius); padding: 14px;
     box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.1); position: relative;
   }
   .dictation-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 13px; opacity: 0.9; }
@@ -73,7 +73,7 @@
     font-family: monospace; word-break: break-word; color: #cbd5e1;
   }
   .dictation-box .highlight { color: #34d399; font-weight: 700; background: rgba(52, 211, 153, 0.15); padding: 2px 6px; border-radius: 4px; }
-  .batch-tag { background: #6366f1; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; margin-right: 4px; }
+  .batch-tag { background: #3b82f6; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; margin-right: 4px; }
 
   /* Card UI */
   .card { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); }
@@ -85,7 +85,7 @@
     width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px;
     font-size: 16px; color: var(--text); outline: none; background: #fafafa; transition: all 0.2s;
   }
-  .input-field:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12); }
+  .input-field:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12); }
 
   /* Search & Items */
   .search-wrapper { position: relative; margin-bottom: 12px; }
@@ -98,7 +98,7 @@
     padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 14px; background: white;
     transition: all 0.2s;
   }
-  .item-row.has-qty { border-color: var(--primary); background: rgba(79, 70, 229, 0.03); }
+  .item-row.has-qty { border-color: var(--primary); background: rgba(37, 99, 235, 0.03); }
   .item-row.flash-updated { animation: flashGlow 1.2s ease-out; }
   @keyframes flashGlow { 0% { background: rgba(16, 185, 129, 0.3); transform: scale(1.02); } 100% { background: white; transform: scale(1); } }
 
@@ -122,7 +122,7 @@
 
   /* App Header */
   .header {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #2563eb 0%, #0284c7 100%);
     color: white; padding: 18px 22px; border-radius: var(--radius);
     box-shadow: var(--shadow); display: flex; align-items: center; justify-content: space-between;
   }
@@ -130,7 +130,7 @@
   .header .tagline { font-size: 12px; opacity: 0.9; margin-top: 2px; }
 
   /* Voice controls hidden until requested */
-  .voice-card { display: none !important; } .dictation-banner{display:block!important;} .fab-mic{display:flex!important;position:fixed;right:16px;bottom:95px;z-index:998;align-items:center;justify-content:center;background:#4f46e5;color:#fff;border:0;border-radius:50%;width:58px;height:58px;box-shadow:0 6px 20px #4338ca80;font-size:22px;cursor:pointer;} .fab-mic.listening{background:#dc2626;}
+  .voice-card { display: none !important; } .dictation-banner{display:block!important;} .fab-mic{display:flex!important;position:fixed;right:16px;bottom:95px;z-index:998;align-items:center;justify-content:center;background:#2563eb;color:#fff;border:0;border-radius:50%;width:58px;height:58px;box-shadow:0 6px 20px #1d4ed880;font-size:22px;cursor:pointer;} .fab-mic.listening{background:#dc2626;}
 
   /* Sticky Mobile Bottom Billing Summary Bar */
   .mobile-bottom-bar {
@@ -143,11 +143,11 @@
   .mobile-total-amount { font-size: 22px; font-weight: 700; color: #34d399; }
   .mobile-due-info { font-size: 13px; color: #f87171; font-weight: 600; }
 
-  .mobile-action-btns { display: flex; align-items: center; gap: 8px; }
+  .mobile-action-btns { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
   .btn-pdf-mobile {
     background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
-    color: white; border: none; padding: 12px 18px; border-radius: 12px;
-    font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;
+    color: white; border: none; padding: 9px 10px; border-radius: 10px;
+    font-size: 12px; line-height: 1.2; min-height: 44px; white-space: nowrap; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
   }
 
@@ -203,7 +203,7 @@
   }
   /* Rate Editing Styling */
   .btn-rate-open {
-    background: rgba(79, 70, 229, 0.1); color: var(--primary); border: 1px solid rgba(79, 70, 229, 0.2);
+    background: rgba(37, 99, 235, 0.1); color: var(--primary); border: 1px solid rgba(37, 99, 235, 0.2);
     padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer;
     display: flex; align-items: center; gap: 6px; transition: all 0.2s; text-decoration: none;
   }
@@ -213,26 +213,18 @@
   .manage-rates-banner { margin-top: 4px; margin-bottom: 2px; }
   .btn-manage-rates-hero {
     display: flex; align-items: center; justify-content: space-between;
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #2563eb 0%, #0284c7 100%);
     color: white; padding: 14px 18px; border-radius: var(--radius);
     font-size: 15px; font-weight: 700; text-decoration: none;
-    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.35); transition: transform 0.15s;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35); transition: transform 0.15s;
   }
   .btn-manage-rates-hero:active { transform: scale(0.98); }
 
-  .header-manage-btn {
-    background: rgba(255,255,255,0.22); color: white; border-radius: 20px;
-    padding: 6px 12px; font-size: 13px; font-weight: 700; text-decoration: none;
-    display: flex; align-items: center; gap: 6px; backdrop-filter: blur(4px);
-    transition: background 0.2s;
-  }
-  .header-manage-btn:hover { background: rgba(255,255,255,0.35); }
-
-  .btn-rate-mobile {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-    color: white; padding: 12px 14px; border-radius: 12px; font-size: 14px;
-    font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 5px;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+.btn-rate-mobile {
+    background: linear-gradient(135deg, #2563eb 0%, #0284c7 100%);
+    color: white; padding: 9px 10px; border-radius: 10px; font-size: 12px;
+    line-height: 1.2; min-height: 44px; white-space: nowrap; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 5px;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
   }
 
   /* Large PDF Hero Button Styling */
@@ -252,16 +244,16 @@
     display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
   }
 
- .voice-panel{border:2px solid #c7d2fe;background:linear-gradient(180deg,#eef2ff,#fff 140px)}
+ .voice-panel{border:2px solid #bfdbfe;background:linear-gradient(180deg,#eff6ff,#fff 140px)}
  .voice-settings{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
  .voice-panel label{display:block;font-size:12px;font-weight:650;color:#475569}
  .voice-panel select,.voice-panel input[type=url],.voice-panel input[type=password],.voice-panel textarea,.voice-field-input{display:block;width:100%;padding:10px;margin-top:5px;border:1px solid #cbd5e1;border-radius:9px;font:inherit;color:#0f172a;background:white;min-width:0}
- .voice-primary{background:#4f46e5;color:white;padding:13px 18px;border:0;border-radius:12px;font-weight:700;cursor:pointer;min-width:150px}
+ .voice-primary{background:#2563eb;color:white;padding:13px 18px;border:0;border-radius:12px;font-weight:700;cursor:pointer;min-width:150px}
  #startVoice{width:100%;font-size:18px;min-height:50px}
  .voice-secondary{background:#e2e8f0;color:#1e293b;border:0;border-radius:9px;padding:10px;cursor:pointer;font-weight:600}
  .voice-help{font-size:12px;color:#64748b;margin-top:7px;line-height:1.5}
  .voice-error{white-space:pre-wrap;font-size:12px;color:#b91c1c;margin-top:8px}
- .voice-review{margin-top:12px;border-top:1px solid #c7d2fe;padding-top:12px}
+ .voice-review{margin-top:12px;border-top:1px solid #bfdbfe;padding-top:12px}
  .voice-review textarea{font-size:15px;line-height:1.45}
  .voice-review-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid #e2e8f0;font-size:14px}
  .voice-review-item input{width:88px;padding:8px;border:1px solid #94a3b8;border-radius:8px;text-align:right;font-size:16px}
@@ -272,19 +264,49 @@
 
  /* Small-screen compatibility: keep every control reachable without horizontal panning. */
  @media (max-width: 600px) {
-   .app-bar { flex-wrap: wrap; gap: 8px; }
-   .app-bar > div:first-child { min-width: 0; }
-   .header-actions { width: 100%; justify-content: space-between; gap: 5px; }
-   .header-actions .icon-btn { width: 35px; height: 35px; flex: 0 0 35px; }
-   .header-manage-btn, .header-pdf-btn { padding: 6px 9px; font-size: 12px; }
+   /* With the redundant rate link removed, keep all remaining header actions on one row. */
+   .app-bar { flex-wrap: nowrap; gap: 8px; padding: 12px 10px; }
+   .app-bar > div:first-child { min-width: 0; flex: 1 1 auto; }
+   .app-title { font-size: clamp(14px, 4.2vw, 18px); gap: 5px; white-space: nowrap; }
+   .app-subtitle { font-size: 10px; white-space: nowrap; }
+   .header-actions { width: auto; margin-left: auto; flex: 0 0 auto; justify-content: flex-end; gap: 5px; }
+   .header-actions .icon-btn { width: 31px; height: 34px; flex: 0 0 31px; font-size: 14px; }
+   .header-pdf-btn { padding: 7px 8px; min-height: 34px; font-size: 11px; gap: 4px; }
  }
  @media (max-width: 350px) {
+   .app-bar { padding: 10px 8px; gap: 4px; }
+   .app-title { font-size: 14px; }
+   .app-subtitle { font-size: 9px; }
+   .header-actions { gap: 3px; }
+   .header-actions .icon-btn { width: 28px; height: 32px; flex-basis: 28px; font-size: 12px; }
+   .header-pdf-btn { padding: 6px 6px; min-height: 32px; font-size: 10px; }
+
    .item-row { flex-wrap: wrap; }
    .qty-controls { margin-left: auto; }
    .mobile-bottom-bar { padding: 10px 8px; gap: 6px; }
-   .btn-pdf-mobile, .btn-rate-mobile { padding: 10px 8px; font-size: 12px; }
+   .btn-pdf-mobile, .btn-rate-mobile { padding: 8px 6px; font-size: 11px; min-height: 44px; }
    .mobile-total-amount { font-size: 19px; }
  }
+
+/* Blue app theme: PDF preview confirms the exact JPEG rendered for the final PDF. */
+.bill-preview-overlay{position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.78);padding:12px;overscroll-behavior:contain}
+.bill-preview-overlay.active{display:flex}
+.bill-preview-sheet{width:100%;max-width:530px;max-height:calc(100dvh - 24px);display:flex;flex-direction:column;border-radius:18px;overflow:hidden;background:#eff6ff;box-shadow:0 20px 65px rgba(0,0,0,.35)}
+.bill-preview-header{display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(135deg,#2563eb,#0284c7);color:white;padding:14px 16px;flex-shrink:0}
+.bill-preview-header strong{display:block;font-size:17px}
+.bill-preview-header small{display:block;font-size:11px;opacity:.94;margin-top:3px}
+.bill-preview-close{border:1px solid rgba(255,255,255,.35);color:white;background:rgba(255,255,255,.18);border-radius:9px;min-width:40px;min-height:40px;font-size:20px;cursor:pointer}
+.bill-preview-scroll{min-height:95px;flex:1;overflow:auto;padding:14px;background:#dbeafe;text-align:center}
+.bill-preview-scroll p{color:#1e3a8a;font-weight:600;margin:18px auto;font-size:14px}
+.bill-preview-image{display:block;max-width:100%;width:auto;height:auto;margin:0 auto;box-shadow:0 5px 24px rgba(15,23,42,.22);background:white}
+.bill-preview-image[hidden]{display:none}
+.bill-preview-actions{display:flex;align-items:center;gap:10px;padding:12px;padding-bottom:max(12px,env(safe-area-inset-bottom));background:#fff;border-top:1px solid #bfdbfe;flex-shrink:0}
+.bill-preview-edit,.bill-preview-save{flex:1;min-height:47px;border:0;border-radius:11px;font-weight:700;font-size:13px;padding:10px 6px;cursor:pointer}
+.bill-preview-edit{background:#e2e8f0;color:#0f172a}
+.bill-preview-save{background:#2563eb;color:#fff}
+.bill-preview-save:disabled{opacity:.48;cursor:not-allowed}
+body.bill-preview-open{overflow:hidden}
+@media(max-width:350px){.bill-preview-actions{gap:6px;padding:8px}.bill-preview-edit,.bill-preview-save{font-size:11px}}
 </style>
   <script type="module" src="/src/mobile-bridge.js"></script>
   <script type="module" src="/src/voice-ui.js"></script>
@@ -298,11 +320,9 @@
     <div class="app-subtitle">மளிகை கடை பில் சிஸ்டம்</div>
   </div>
   <div class="header-actions">
-    <a href="rates.html" class="header-manage-btn" title="Edit Rates & Add Items / பொருட்கள் & விலை மேலாண்மை">
-      <i class="fa-solid fa-tags"></i> <span>விலை & பொருள்</span>
-    </a>
-    <button class="header-pdf-btn" onclick="generatePDF()" title="Download PDF Bill / PDF பதிவிறக்கம்">
-      <i class="fa-solid fa-file-pdf"></i> <span>PDF</span>
+
+    <button class="header-pdf-btn" onclick="generatePDF()" title="Preview PDF Bill / PDF முன்னோட்டம்">
+      <i class="fa-solid fa-eye"></i> <span>Preview</span>
     </button>
     <button class="icon-btn" onclick="toggleLanguage()" id="langIconBtn" title="Change Language"><i class="fa-solid fa-globe"></i></button>
     <button class="icon-btn" onclick="toggleTTS()" id="ttsIconBtn" title="TTS Confirmation"><i class="fa-solid fa-volume-high"></i></button>
@@ -412,7 +432,7 @@
   <div class="pdf-hero-card">
     <button class="btn-pdf-hero" id="pdfBtnMain" onclick="generatePDF()">
       <i class="fa-solid fa-file-pdf" style="font-size:22px"></i>
-      <span>📄 PDF பில் பதிவிறக்கம் (Download PDF Bill)</span>
+      <span>👁️ பில் முன்னோட்டம் (Preview PDF Bill)</span>
     </button>
   </div>
 
@@ -438,8 +458,8 @@
     <a href="rates.html" class="btn-rate-mobile" title="Add Items / Edit Rates">
       <i class="fa-solid fa-tags"></i> <span>விலை மாற்றம்</span>
     </a>
-    <button class="btn-pdf-mobile" id="pdfBtn" onclick="generatePDF()">
-      <i class="fa-solid fa-file-pdf"></i> PDF பில்
+    <button class="btn-pdf-mobile" id="pdfBtn" onclick="generatePDF()" aria-label="Preview PDF bill" title="Preview PDF bill">
+      <i class="fa-solid fa-eye"></i> Preview
     </button>
   </div>
 </div>
@@ -457,6 +477,24 @@
     <div class="example-pill">🗣️ "மல்லி 2 கிலோ சிக்கன் 1.5 கிலோ சீரகம் 250 கிராம் பெயர் முருகன் வரவு 500"</div>
     <div class="example-pill">🗣️ "malli 2 kg, chicken half kg, jeera 250g, paid 1000"</div>
     <div class="example-pill">🗣️ "கால் கிலோ மிளகு, 500 கிராம் தக்காளி, பெயர் அன்பு"</div>
+  </div>
+</div>
+
+<!-- Review the exact rendered receipt before saving or sharing the PDF. -->
+<div class="bill-preview-overlay" id="billPreviewDialog" role="dialog" aria-modal="true" aria-label="Bill preview" aria-hidden="true" onclick="if(event.target===this)closeBillPreview()">
+  <div class="bill-preview-sheet">
+    <div class="bill-preview-header">
+      <div><strong>👁️ பில் முன்னோட்டம்</strong><small>Bill preview — review before download or share</small></div>
+      <button type="button" class="bill-preview-close" onclick="closeBillPreview()" aria-label="Close bill preview">✕</button>
+    </div>
+    <div class="bill-preview-scroll" id="billPreviewScroll">
+      <p id="billPreviewStatus" role="status">Preparing bill preview…</p>
+      <img id="billPreviewImage" class="bill-preview-image" alt="Preview of the exact PDF bill" hidden>
+    </div>
+    <div class="bill-preview-actions">
+      <button type="button" class="bill-preview-edit" onclick="closeBillPreview()">← திருத்து / Edit</button>
+      <button type="button" class="bill-preview-save" id="confirmBillDownload" onclick="downloadPreviewBill()" disabled>📄 Download / Share PDF</button>
+    </div>
   </div>
 </div>
 
@@ -929,6 +967,69 @@ function escapeReceiptText(value) {
   return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
 }
 
+let pendingBillPreview = null;
+let billPreviewRequestId = 0;
+let previousBillFocus = null;
+let billPreviewSaving = false;
+
+function closeBillPreview() {
+  if (billPreviewSaving) return;  // Don't dismiss while the phone opens its share sheet.
+  billPreviewRequestId++;
+  pendingBillPreview = null;
+  const modal = document.getElementById('billPreviewDialog');
+  modal.classList.remove('active');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('bill-preview-open');
+  document.getElementById('billPreviewImage').removeAttribute('src');
+  document.getElementById('billPreviewImage').hidden = true;
+  document.querySelectorAll('#pdfBtn, #pdfBtnMain, .header-pdf-btn').forEach(b => { b.disabled = false; });
+  if (previousBillFocus && typeof previousBillFocus.focus === 'function') previousBillFocus.focus();
+}
+
+window.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && document.getElementById('billPreviewDialog').classList.contains('active')) {
+    closeBillPreview();
+  }
+});
+
+async function downloadPreviewBill() {
+  if (!pendingBillPreview || billPreviewSaving) return;
+  const confirm = document.getElementById('confirmBillDownload');
+  const status = document.getElementById('billPreviewStatus');
+  const data = pendingBillPreview;
+  billPreviewSaving = true;
+  confirm.disabled = true;
+  const previousText = confirm.textContent;
+  confirm.textContent = 'Preparing PDF…';
+  try {
+    const jsPDF = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+    // Preserve the exact original 90 mm receipt, margins, JPEG quality and scaling.
+    const pdfWidth = 90;
+    const margin = 2;
+    const imageWidth = pdfWidth - margin * 2;
+    const imageHeight = (data.canvasHeight * imageWidth) / data.canvasWidth;
+    const pdfHeight = imageHeight + margin * 2;
+    const pdf = new jsPDF({
+      orientation: pdfHeight >= pdfWidth ? 'portrait' : 'landscape',
+      unit: 'mm',
+      format: [pdfWidth, pdfHeight],
+      compress: true
+    });
+    pdf.addImage(data.imgData, 'JPEG', margin, margin, imageWidth, imageHeight, undefined, 'FAST');
+    const safeName = data.custName.replace(/[\\/:*?"<>|]+/g, '_').replace(/\s+/g, '_').slice(0, 60);
+    await window.saveBillPDF(pdf, `Bill_${safeName}.pdf`);
+    billPreviewSaving = false;
+    closeBillPreview();
+  } catch (err) {
+    console.error('PDF export error:', err);
+    status.textContent = 'PDF export failed. Please try again.';
+    status.hidden = false;
+    billPreviewSaving = false;
+    confirm.disabled = false;
+    confirm.textContent = previousText;
+  }
+}
+
 function generatePDF() {
   const activeItems = [];
   items.forEach((item, i) => {
@@ -1003,6 +1104,24 @@ function generatePDF() {
     </div>
   `;
 
+  // Render once before any file is downloaded. Preview and the final PDF use
+  // the same JPEG bytes, so long names, Tamil letters and amounts look identical.
+  const requestId = ++billPreviewRequestId;
+  pendingBillPreview = null;
+  const modal = document.getElementById('billPreviewDialog');
+  const status = document.getElementById('billPreviewStatus');
+  const image = document.getElementById('billPreviewImage');
+  const confirm = document.getElementById('confirmBillDownload');
+  previousBillFocus = document.activeElement;
+  modal.classList.add('active');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('bill-preview-open');
+  status.textContent = 'Preparing bill preview… / பில் தயாராகிறது…';
+  status.hidden = false;
+  image.hidden = true;
+  image.removeAttribute('src');
+  confirm.disabled = true;
+
   html2canvas(previewEl, {
     scale: 1.5,
     useCORS: true,
@@ -1020,32 +1139,25 @@ function generatePDF() {
         clonedPreview.style.display = 'block';
       }
     }
-  }).then(async canvas => {
-    const imgData = canvas.toDataURL('image/jpeg', 0.80);
-    const jsPDF = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
-    // Keep the familiar 90 mm receipt. Use 2 mm margins so amounts never touch the edge.
-    // Explicitly choose orientation: jsPDF otherwise swaps the dimensions of short bills,
-    // cropping the right-hand columns when only a few products are present.
-    const pdfWidth = 90;
-    const margin = 2;
-    const imageWidth = pdfWidth - margin * 2;
-    const imageHeight = (canvas.height * imageWidth) / canvas.width;
-    const pdfHeight = imageHeight + margin * 2;
-    const pdf = new jsPDF({
-      orientation: pdfHeight >= pdfWidth ? 'portrait' : 'landscape',
-      unit: 'mm',
-      format: [pdfWidth, pdfHeight],
-      compress: true
-    });
-
-    pdf.addImage(imgData, 'JPEG', margin, margin, imageWidth, imageHeight, undefined, 'FAST');
-    await window.saveBillPDF(pdf, `Bill_${custName.replace(/[\\/:*?"<>|]+/g, "_").replace(/\s+/g, "_").slice(0, 60)}.pdf`);
-
-    pdfButtons.forEach(b => { b.disabled = false; });
+  }).then(canvas => {
+    if (requestId !== billPreviewRequestId) return;  // User dismissed loading preview.
+    pendingBillPreview = {
+      imgData: canvas.toDataURL('image/jpeg', 0.80),
+      canvasWidth: canvas.width,
+      canvasHeight: canvas.height,
+      custName
+    };
+    image.src = pendingBillPreview.imgData;
+    image.hidden = false;
+    status.hidden = true;
+    confirm.disabled = false;
+    confirm.focus();
   }).catch(err => {
-    console.error("PDF Error:", err);
-    alert("PDF உருவாக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும். (Could not create or share PDF.)");
-    pdfButtons.forEach(b => { b.disabled = false; });
+    if (requestId !== billPreviewRequestId) return;
+    console.error('Bill preview error:', err);
+    status.textContent = 'Could not prepare bill preview. Please close and try again.';
+  }).finally(() => {
+    if (requestId === billPreviewRequestId) pdfButtons.forEach(b => { b.disabled = false; });
   });
 }
 

@@ -1,8 +1,9 @@
-# Verification report — 23 November 2026
+# Malikadai Bill v2.9 checks (23 November 2026)
 
-- Restored PDF source: same as approved v2.2 source project (original receipt style; compact 2.3 not used).
-- Updated GitHub Android build workflow to `setup-android@v4`; official action no longer requests removed SDK `tools` package.
-- Verified Android SDK API 35 / build-tools 35.0.0 configuration, Java 21 and Node 22 configuration against current docs.
-- Node voice parser, server access checks, and Android manifest tests can be run with `npm run verify` without network.
-- Android-native compilation, external npm dependency installation, and physical phone speech/share tests cannot be performed here; they require a working external build environment.
-- An APK is only ready once a GitHub Actions run succeeds and uploads the `MalikadaiBill-Android-APK` artifact.
+- **45/45 Node automated tests passed** (`node --test tests/*.test.mjs`).
+- **8/8 PDF preview browser interactions passed:** index.html and billing.html at 320, 360, 390, 430px; preview before save, edit/cancel without download, confirm PDF, no JavaScript page errors or horizontal overflow.
+- **12/12 compact-header layout checks passed:** both billing pages at 320, 340, 360, 390, 430, 600px; header remains one row, remaining four controls stay visible, and fixed bottom buttons retain at least 44px tap targets.
+- JavaScript syntax checked for scripts, UI, parser, and transcription backend.
+- **Not tested:** Android native compilation, Android speech recognizer/microphone on a real phone, native PDF sharing, and upgrade data persistence. These require a GitHub Actions build and on-device tests.
+
+This is a source ZIP, not an APK.

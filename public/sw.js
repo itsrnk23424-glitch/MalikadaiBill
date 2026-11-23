@@ -1,4 +1,4 @@
-const CACHE_NAME = 'malikadai-mobile-voice-v4';
+const CACHE_NAME = 'malikadai-mobile-voice-v5';
 const CORE = ['./', './index.html', './billing.html', './rates.html', './manifest.json', './icon.svg', './icon-192.png', './icon-512.png', './icon-180.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(CORE)).then(() => self.skipWaiting()));

@@ -1,4 +1,4 @@
-# Malikadai Bill — Android Voice Pro 2.4 (original PDF restored)
+# Malikadai Bill — Android Voice Pro 2.9 (Blue Theme + Bill Preview)
 
 **This is the COMPLETE Android source project for GitHub Actions. It is not an APK yet.**
 
@@ -11,6 +11,12 @@
 - Optional advanced transcription server (requires hosting and API credentials; not enabled)
 - App icon, splash source images and all build/test configuration
 - `.github/workflows/android-apk.yml` — **fixed `setup-android@v4`**; auto-builds on push to `main` and supports manual build
+
+## Final UI changes in v2.9
+
+- The redundant **விலை & பொருள்** top header action has been removed; remaining top actions form a compact right-aligned row.
+- Bill preview before PDF download, blue theme, and medium-size **bottom** action buttons are included.
+- For detailed changes, read `PREVIEW_AND_BLUE_THEME_v2_9.md`.
 
 ## First: upload the full project (not the ZIP alone)
 

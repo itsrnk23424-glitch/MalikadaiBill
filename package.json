@@ -1,9 +1,9 @@
 {
   "name": "malikadai-bill-android",
   "private": true,
-  "version": "2.7.0",
+  "version": "2.9.0",
   "type": "module",
-  "description": "Android-first Tamil/Tanglish/English voice grocery billing; restored original PDF receipt.",
+  "description": "Android Tamil/Tanglish/English voice grocery billing with PDF confirmation preview, blue app theme and compact single-row header.",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
