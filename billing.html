@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Malikadai Bill | மளிகை கடை பில்</title>
+<!-- PWA Meta -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<meta name="theme-color" content="#4f46e5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<!-- PDF Generator Libraries -->
+<!-- Fonts & Icons -->
+
+<style>
+  :root {
+    --primary: #4f46e5;
+    --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    --accent: #10b981;
+    --accent-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --dark: #0f172a;
+    --bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 16px;
+    --shadow: 0 10px 25px -5px rgba(0,0,0,0.06), 0 8px 10px -6px rgba(0,0,0,0.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans Tamil', 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); padding-bottom: 130px; font-size: 16px; line-height: 1.4; min-height: 100vh; }
+
+  /* Top App Bar */
+  .app-bar {
+    background: var(--primary-gradient); color: white; padding: 14px 18px;
+    box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .app-title { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .app-subtitle { font-size: 12px; opacity: 0.9; font-weight: 400; }
+
+  .header-actions { display: flex; align-items: center; gap: 8px; }
+  .icon-btn {
+    background: rgba(255,255,255,0.18); border: none; color: white;
+    width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 16px; cursor: pointer; backdrop-filter: blur(4px);
+    text-decoration: none;
+  }
+
+  .container { max-width: 600px; margin: 0 auto; padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+
+  /* Live Dictation Banner */
+  .dictation-banner {
+    background: #1e1b4b; color: white; border-radius: var(--radius); padding: 14px;
+    box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.1); position: relative;
+  }
+  .dictation-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 13px; opacity: 0.9; }
+  .status-badge {
+    padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    background: rgba(255,255,255,0.15); display: flex; align-items: center; gap: 5px;
+  }
+  .status-badge.listening { background: #ef4444; animation: blink 1.2s infinite; }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+  .dictation-box {
+    background: rgba(15, 23, 42, 0.7); border: 1px dashed rgba(255,255,255,0.2);
+    border-radius: 10px; padding: 12px; min-height: 50px; font-size: 14px;
+    font-family: monospace; word-break: break-word; color: #cbd5e1;
+  }
+  .dictation-box .highlight { color: #34d399; font-weight: 700; background: rgba(52, 211, 153, 0.15); padding: 2px 6px; border-radius: 4px; }
+  .batch-tag { background: #6366f1; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; margin-right: 4px; }
+
+  /* Card UI */
+  .card { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .input-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; }
+  .input-field {
+    width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+    font-size: 16px; color: var(--text); outline: none; background: #fafafa; transition: all 0.2s;
+  }
+  .input-field:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12); }
+
+  /* Search & Items */
+  .search-wrapper { position: relative; margin-bottom: 12px; }
+  .search-input { width: 100%; padding: 14px 14px 14px 42px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 16px; }
+  .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 16px; }
+
+  .item-list-container { display: flex; flex-direction: column; gap: 10px; max-height: 440px; overflow-y: auto; padding-right: 2px; }
+  .item-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 14px; background: white;
+    transition: all 0.2s;
+  }
+  .item-row.has-qty { border-color: var(--primary); background: rgba(79, 70, 229, 0.03); }
+  .item-row.flash-updated { animation: flashGlow 1.2s ease-out; }
+  @keyframes flashGlow { 0% { background: rgba(16, 185, 129, 0.3); transform: scale(1.02); } 100% { background: white; transform: scale(1); } }
+
+  .item-info { flex: 1; }
+  .item-name { font-weight: 700; color: var(--dark); font-size: 16px; }
+  .item-meta { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .price-tag { color: var(--primary); font-weight: 700; }
+
+  .qty-controls { display: flex; align-items: center; gap: 8px; }
+  .btn-qty {
+    width: 40px; height: 40px; border: none; border-radius: 10px; font-size: 20px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; transition: active 0.1s;
+  }
+  .btn-qty:active { transform: scale(0.92); }
+  .btn-minus { background: #fee2e2; color: var(--danger); }
+  .btn-plus { background: #d1fae5; color: var(--accent); }
+  .qty-input-field {
+    width: 65px; text-align: center; padding: 8px; border: 1.5px solid var(--border);
+    border-radius: 10px; font-weight: 700; font-size: 17px; color: var(--dark); background: white;
+  }
+
+  /* App Header */
+  .header {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white; padding: 18px 22px; border-radius: var(--radius);
+    box-shadow: var(--shadow); display: flex; align-items: center; justify-content: space-between;
+  }
+  .header h1 { font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+  .header .tagline { font-size: 12px; opacity: 0.9; margin-top: 2px; }
+
+  /* Voice controls hidden until requested */
+  .voice-card { display: none !important; } .dictation-banner{display:block!important;} .fab-mic{display:flex!important;position:fixed;right:16px;bottom:95px;z-index:998;align-items:center;justify-content:center;background:#4f46e5;color:#fff;border:0;border-radius:50%;width:58px;height:58px;box-shadow:0 6px 20px #4338ca80;font-size:22px;cursor:pointer;} .fab-mic.listening{background:#dc2626;}
+
+  /* Sticky Mobile Bottom Billing Summary Bar */
+  .mobile-bottom-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 900;
+    background: #0f172a; color: white; padding: 14px 18px; border-top-left-radius: 20px; border-top-right-radius: 20px;
+    box-shadow: 0 -10px 25px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: space-between;
+  }
+  .mobile-total-info { display: flex; flex-direction: column; }
+  .mobile-total-label { font-size: 13px; opacity: 0.8; }
+  .mobile-total-amount { font-size: 22px; font-weight: 700; color: #34d399; }
+  .mobile-due-info { font-size: 13px; color: #f87171; font-weight: 600; }
+
+  .mobile-action-btns { display: flex; align-items: center; gap: 8px; }
+  .btn-pdf-mobile {
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+    color: white; border: none; padding: 12px 18px; border-radius: 12px;
+    font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+  }
+
+  /* Help Drawer Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000;
+    display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px);
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-sheet {
+    background: white; width: 100%; max-width: 600px; border-top-left-radius: 24px; border-top-right-radius: 24px;
+    padding: 20px; max-height: 80vh; overflow-y: auto; box-shadow: 0 -10px 30px rgba(0,0,0,0.3);
+  }
+  .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; display: flex; justify-content: space-between; }
+
+  .example-pill { background: #f1f5f9; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 12px; font-weight: 500; color: var(--primary); }
+
+  /* Hidden PDF Container - Compact Receipt Format */
+  #billPreview {
+    position: fixed; left: -10000px; top: 0; width: 420px; background: white;
+    padding: 12px; font-family: 'Noto Sans Tamil', Arial, sans-serif; color: #000;
+    z-index: -9999; opacity: 0; pointer-events: none;
+  }
+  #billPreview table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  #billPreview th { background: #fff; color: #111; padding: 4px 6px; font-size: 13px; text-align: left; border-bottom: 1px solid #444; }
+  #billPreview td { padding: 4px 6px; border-bottom: 1px solid #ddd; font-size: 13px; }
+  /* Rate Editing Modal Styling */
+  /* Rate Editing Styling */
+  .btn-rate-open {
+    background: rgba(79, 70, 229, 0.1); color: var(--primary); border: 1px solid rgba(79, 70, 229, 0.2);
+    padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; gap: 6px; transition: all 0.2s; text-decoration: none;
+  }
+  .btn-rate-open:hover { background: var(--primary); color: white; }
+
+  /* Hero & Bar Rate Management Buttons */
+  .manage-rates-banner { margin-top: 4px; margin-bottom: 2px; }
+  .btn-manage-rates-hero {
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white; padding: 14px 18px; border-radius: var(--radius);
+    font-size: 15px; font-weight: 700; text-decoration: none;
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.35); transition: transform 0.15s;
+  }
+  .btn-manage-rates-hero:active { transform: scale(0.98); }
+
+  .header-manage-btn {
+    background: rgba(255,255,255,0.22); color: white; border-radius: 20px;
+    padding: 6px 12px; font-size: 13px; font-weight: 700; text-decoration: none;
+    display: flex; align-items: center; gap: 6px; backdrop-filter: blur(4px);
+    transition: background 0.2s;
+  }
+  .header-manage-btn:hover { background: rgba(255,255,255,0.35); }
+
+  .btn-rate-mobile {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white; padding: 12px 14px; border-radius: 12px; font-size: 14px;
+    font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 5px;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+  }
+
+  /* Large PDF Hero Button Styling */
+  .pdf-hero-card { margin: 8px 0; }
+  .btn-pdf-hero {
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white; border: none; padding: 16px 20px; border-radius: var(--radius);
+    font-size: 18px; font-weight: 700; cursor: pointer;
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4); transition: transform 0.15s, box-shadow 0.2s;
+  }
+  .btn-pdf-hero:active { transform: scale(0.98); }
+
+  .header-pdf-btn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none;
+    border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+  }
+
+ .voice-panel{border:2px solid #c7d2fe;background:linear-gradient(180deg,#eef2ff,#fff 140px)}
+ .voice-settings{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+ .voice-panel label{display:block;font-size:12px;font-weight:650;color:#475569}
+ .voice-panel select,.voice-panel input[type=url],.voice-panel input[type=password],.voice-panel textarea,.voice-field-input{display:block;width:100%;padding:10px;margin-top:5px;border:1px solid #cbd5e1;border-radius:9px;font:inherit;color:#0f172a;background:white;min-width:0}
+ .voice-primary{background:#4f46e5;color:white;padding:13px 18px;border:0;border-radius:12px;font-weight:700;cursor:pointer;min-width:150px}
+ #startVoice{width:100%;font-size:18px;min-height:50px}
+ .voice-secondary{background:#e2e8f0;color:#1e293b;border:0;border-radius:9px;padding:10px;cursor:pointer;font-weight:600}
+ .voice-help{font-size:12px;color:#64748b;margin-top:7px;line-height:1.5}
+ .voice-error{white-space:pre-wrap;font-size:12px;color:#b91c1c;margin-top:8px}
+ .voice-review{margin-top:12px;border-top:1px solid #c7d2fe;padding-top:12px}
+ .voice-review textarea{font-size:15px;line-height:1.45}
+ .voice-review-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid #e2e8f0;font-size:14px}
+ .voice-review-item input{width:88px;padding:8px;border:1px solid #94a3b8;border-radius:8px;text-align:right;font-size:16px}
+ .voice-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+ #voiceFields{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 0}
+ .voice-check{display:flex!important;gap:8px;align-items:center;margin-top:8px}
+ @media(max-width:380px){.voice-settings{grid-template-columns:1fr}}
+
+ /* Small-screen compatibility: keep every control reachable without horizontal panning. */
+ @media (max-width: 600px) {
+   .app-bar { flex-wrap: wrap; gap: 8px; }
+   .app-bar > div:first-child { min-width: 0; }
+   .header-actions { width: 100%; justify-content: space-between; gap: 5px; }
+   .header-actions .icon-btn { width: 35px; height: 35px; flex: 0 0 35px; }
+   .header-manage-btn, .header-pdf-btn { padding: 6px 9px; font-size: 12px; }
+ }
+ @media (max-width: 350px) {
+   .item-row { flex-wrap: wrap; }
+   .qty-controls { margin-left: auto; }
+   .mobile-bottom-bar { padding: 10px 8px; gap: 6px; }
+   .btn-pdf-mobile, .btn-rate-mobile { padding: 10px 8px; font-size: 12px; }
+   .mobile-total-amount { font-size: 19px; }
+ }
+</style>
+  <script type="module" src="/src/mobile-bridge.js"></script>
+  <script type="module" src="/src/voice-ui.js"></script>
+</head>
+<body>
+
+<!-- Top App Header -->
+<header class="app-bar">
+  <div>
+    <div class="app-title"><i class="fa-solid fa-store"></i> Malikadai Bill</div>
+    <div class="app-subtitle">மளிகை கடை பில் சிஸ்டம்</div>
+  </div>
+  <div class="header-actions">
+    <a href="rates.html" class="header-manage-btn" title="Edit Rates & Add Items / பொருட்கள் & விலை மேலாண்மை">
+      <i class="fa-solid fa-tags"></i> <span>விலை & பொருள்</span>
+    </a>
+    <button class="header-pdf-btn" onclick="generatePDF()" title="Download PDF Bill / PDF பதிவிறக்கம்">
+      <i class="fa-solid fa-file-pdf"></i> <span>PDF</span>
+    </button>
+    <button class="icon-btn" onclick="toggleLanguage()" id="langIconBtn" title="Change Language"><i class="fa-solid fa-globe"></i></button>
+    <button class="icon-btn" onclick="toggleTTS()" id="ttsIconBtn" title="TTS Confirmation"><i class="fa-solid fa-volume-high"></i></button>
+    <button class="icon-btn" onclick="openHelpModal()" title="Help"><i class="fa-solid fa-circle-question"></i></button>
+  </div>
+</header>
+
+<div class="container">
+  <!-- Prominent Hero Banner Button for Manage Rates & Add Items -->
+  <div class="manage-rates-banner">
+    <a href="rates.html" class="btn-manage-rates-hero">
+      <span style="display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-pen-to-square" style="font-size:18px"></i>
+        <span>பொருட்கள் & விலை மாற்றம் (Add Items & Edit Rates)</span>
+      </span>
+      <i class="fa-solid fa-chevron-right"></i>
+    </a>
+  </div>
+  <!-- Live Dictation Log Banner -->
+  <section class="dictation-banner">
+    <div class="dictation-header">
+      <span><i class="fa-solid fa-waveform"></i> குரல் பதிவு (Voice Dictation)</span>
+      <div class="status-badge" id="statusBadge">
+        <i class="fa-solid fa-circle" style="font-size:8px"></i> <span id="statusText">தயார் (Ready)</span>
+      </div>
+    </div>
+    <div class="dictation-box" id="dictationText">
+      🎤 மைக்கை அழுத்தி <strong>முழு பில்லையும் ஒரே தடவையில்</strong> பேசுங்கள்...<br>
+      <small style="opacity:0.8;font-size:11px">உதா: "மல்லி 2 கிலோ, சிக்கன் 1.5 கிலோ, சீரகம் 250 கிராம், பெயர் குமார், வரவு 1000"</small>
+    </div>
+  </section>
+
+
+  <!-- Voice-first checkout: transcription is ALWAYS reviewed before totals change. -->
+  <section class="voice-panel card" aria-label="Voice billing assistant">
+    <div class="card-title">🎙️ Smart Voice Billing <small style="color:#64748b;font-weight:400">தமிழ் · Tanglish · English</small></div>
+    <div class="voice-settings">
+      <label>Language <select id="voiceLanguage"><option value="ta-IN">தமிழ் / Tanglish</option><option value="en-IN">English (India)</option></select></label>
+      <label>Voice engine <select id="voiceEngine"><option value="phone">Phone speech recognition</option><option value="advanced">Advanced AI (online setup)</option></select></label>
+    </div>
+    <div id="advancedOptions" hidden>
+      <label>Private HTTPS API address <input id="voiceServer" type="url" placeholder="https://your-secure-server.example" autocomplete="off" /></label>
+      <label>Private access token <input id="voiceToken" type="password" placeholder="Server token" autocomplete="off" /></label>
+      <p class="voice-help">Requires a private transcription server and API billing. The API key stays on that server, never inside this app.</p>
+    </div>
+    <button type="button" id="startVoice" class="voice-primary">🎙 பேசுங்கள் / Speak</button>
+    <button type="button" id="manualVoice" class="voice-secondary" style="width:100%;margin-top:7px">✍ Type / test a voice command</button>
+    <p class="voice-help" id="voiceStatus">Ready · say “மல்லி 2 கிலோ, சீரகம் 250 கிராம், வரவு 500”</p>
+    <div id="voiceErrors" class="voice-error" role="alert"></div>
+    <label class="voice-check"><input type="checkbox" id="voiceSpeakBack" checked /> Read confirmation aloud / ஒலி அறிவிப்பு</label>
+    <section id="voiceReview" class="voice-review" hidden>
+      <strong>Review recognized bill before applying</strong>
+      <label>Heard / திருத்தவும் <textarea rows="2" id="rawSpeech" spellcheck="false"></textarea></label>
+      <button type="button" id="reparseVoice" class="voice-secondary">↻ Recheck edited text</button>
+      <div id="voiceReviewRows"></div>
+      <div id="voiceFields"></div>
+      <div class="voice-actions"><button type="button" class="voice-primary" id="applyVoice">✓ Add to bill</button><button type="button" id="cancelVoice" class="voice-secondary">Cancel</button></div>
+    </section>
+  </section>
+
+  <!-- Customer & Bill Info Card -->
+  <section class="card">
+    <div class="card-title"><i class="fa-solid fa-user-pen" style="color:var(--primary)"></i> வாடிக்கையாளர் விவரம்</div>
+    <div class="grid-2">
+      <div class="input-group">
+        <label for="custName"><i class="fa-solid fa-user"></i> பெயர் (Name)</label>
+        <input type="text" id="custName" class="input-field" placeholder="Say 'பெயர் குமார்'">
+      </div>
+      <div class="input-group">
+        <label for="billDate"><i class="fa-solid fa-calendar"></i> தேதி (Date)</label>
+        <input type="text" id="billDate" class="input-field" placeholder="dd/mm/yyyy" maxlength="10">
+      </div>
+    </div>
+  </section>
+
+  <!-- Items List Card -->
+  <section class="card">
+    <div class="card-title" style="display:flex; justify-content:space-between; align-items:center;">
+      <span><i class="fa-solid fa-basket-shopping" style="color:var(--primary)"></i> பொருட்கள் பட்டியல்</span>
+      <a href="rates.html" class="btn-rate-open" style="text-decoration:none">
+        <i class="fa-solid fa-pen-to-square"></i> பொருட்கள் & விலை மேலாண்மை
+      </a>
+    </div>
+    <div class="search-wrapper">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input type="text" id="searchBox" class="search-input" placeholder="தேடு... (e.g. மல்லி / chicken)" oninput="renderItems(this.value)">
+    </div>
+    <div class="item-list-container" id="itemList"></div>
+  </section>
+
+  <!-- Old Balance & Cash Paid Card -->
+  <section class="card">
+    <div class="card-title"><i class="fa-solid fa-wallet" style="color:var(--primary)"></i> பாக்கி & செலுத்திய தொகை</div>
+    <div class="grid-2">
+      <div class="input-group">
+        <label for="oldBalance">பழைய பாக்கி ₹</label>
+        <input type="number" id="oldBalance" class="input-field" placeholder="0.00" min="0" step="any" oninput="updateCalculations()">
+      </div>
+      <div class="input-group">
+        <label for="amountGiven">வரவு (Paid) ₹</label>
+        <input type="number" id="amountGiven" class="input-field" placeholder="0.00" min="0" step="any" oninput="updateCalculations()">
+      </div>
+    </div>
+  </section>
+
+  <!-- Prominent PDF Download Button Card -->
+  <div class="pdf-hero-card">
+    <button class="btn-pdf-hero" id="pdfBtnMain" onclick="generatePDF()">
+      <i class="fa-solid fa-file-pdf" style="font-size:22px"></i>
+      <span>📄 PDF பில் பதிவிறக்கம் (Download PDF Bill)</span>
+    </button>
+  </div>
+
+  <!-- Clear Action -->
+  <button onclick="clearAll()" style="width:100%;padding:10px;border:none;border-radius:12px;background:#e2e8f0;color:#475569;font-weight:600;cursor:pointer">
+    <i class="fa-solid fa-rotate-left"></i> பில் ரீசெட் (Clear All)
+  </button>
+</div>
+
+<!-- Floating Action Button (FAB) Mic Button -->
+<button class="fab-mic" id="fabMic" onclick="toggleVoice()" title="Tap to Speak">
+  <i class="fa-solid fa-microphone"></i>
+</button>
+
+<!-- Sticky Mobile Bottom Billing Summary Bar -->
+<div class="mobile-bottom-bar">
+  <div class="mobile-total-info">
+    <span class="mobile-total-label">மொத்த தொகை (Net Total)</span>
+    <span class="mobile-total-amount" id="mobileGrandTotal">₹0.00</span>
+    <span class="mobile-due-info" id="mobileDueInfo">பாக்கி: ₹0.00</span>
+  </div>
+  <div class="mobile-action-btns">
+    <a href="rates.html" class="btn-rate-mobile" title="Add Items / Edit Rates">
+      <i class="fa-solid fa-tags"></i> <span>விலை மாற்றம்</span>
+    </a>
+    <button class="btn-pdf-mobile" id="pdfBtn" onclick="generatePDF()">
+      <i class="fa-solid fa-file-pdf"></i> PDF பில்
+    </button>
+  </div>
+</div>
+
+<!-- Help Modal Drawer -->
+<div class="modal-overlay" id="helpModal" onclick="closeHelpModal(event)">
+  <div class="modal-sheet">
+    <div class="modal-title">
+      <span><i class="fa-solid fa-lightbulb" style="color:var(--warning)"></i> ஒரே தொடரில் பேசும் வழிகாட்டி</span>
+      <i class="fa-solid fa-xmark" style="cursor:pointer" onclick="closeHelpModal()"></i>
+    </div>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">
+      மைக்கை ஒருமுறை ஆன் செய்து <strong>அனைத்துப் பொருட்களையும் ஒரே வாக்கியத்தில்</strong> பேசுங்கள்:
+    </p>
+    <div class="example-pill">🗣️ "மல்லி 2 கிலோ சிக்கன் 1.5 கிலோ சீரகம் 250 கிராம் பெயர் முருகன் வரவு 500"</div>
+    <div class="example-pill">🗣️ "malli 2 kg, chicken half kg, jeera 250g, paid 1000"</div>
+    <div class="example-pill">🗣️ "கால் கிலோ மிளகு, 500 கிராம் தக்காளி, பெயர் அன்பு"</div>
+<!-- Rate Editing Modal Drawer -->
+<div class="modal-overlay" id="rateModal" onclick="closeRateModal(event)">
+  <div class="modal-sheet rate-sheet" onclick="event.stopPropagation()">
+    <div class="modal-title">
+      <span><i class="fa-solid fa-tags" style="color:var(--primary)"></i> பொருட்கள் விலை மாற்றம் (Edit Rate Master)</span>
+      <i class="fa-solid fa-xmark" style="cursor:pointer" onclick="closeRateModal()"></i>
+    </div>
+    <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px">
+      பொருட்களின் விற்பனை விலையை (Price per Unit) இங்கு கைமுறையாக மாற்றலாம்:
+    </p>
+    <div class="search-wrapper">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input type="text" id="rateSearchBox" class="search-input" placeholder="தேடு... (e.g. மல்லி / chicken)" oninput="renderRateItems(this.value)">
+    </div>
+    <div class="rate-item-list" id="rateItemList"></div>
+    <div class="rate-modal-footer">
+      <button class="btn-reset-rates" onclick="resetAllPrices()">
+        <i class="fa-solid fa-rotate-left"></i> இயல்பு நிலை (Reset)
+      </button>
+      <button class="btn-save-rates" onclick="closeRateModal()">
+        <i class="fa-solid fa-check"></i> சேமி (Done)
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden Bill Preview Container for PDF Export -->
+<div id="billPreview"></div>
+
+<script>
+// ─────────────────────────────────────────────────────────
+// Items Master Database (Default & Dynamic Custom Items)
+// ─────────────────────────────────────────────────────────
+const DEFAULT_ITEMS = [
+  { name: "மல்லி", unit: "1kg", price: 180, aliases: ["malli", "coriander", "dhaniya", "malli thool"] },
+  { name: "மிளகாய்", unit: "1kg", price: 280, aliases: ["milagai", "chilli", "red chilli", "milagai thool", "மிளகா"] },
+  { name: "மிதூள்", unit: "1kg", price: 240, aliases: ["mithool", "chilli powder", "milagai podi"] },
+  { name: "கறி", unit: "1kg", price: 425, aliases: ["kari", "mutton", "meat", "kari masala"] },
+  { name: "சிக்கன்", unit: "1kg", price: 325, aliases: ["chicken", "chiken", "chicken masala"] },
+  { name: "கரம்", unit: "1kg", price: 465, aliases: ["garam", "garam masala"] },
+  { name: "கமாவு", unit: "1kg", price: 60, aliases: ["kamavu", "gram flour", "kadalai maavu"] },
+  { name: "பட்டாணி", unit: "1kg", price: 58, aliases: ["pattani", "peas", "green peas"] },
+  { name: "காண்", unit: "1kg", price: 50, aliases: ["corn", "kaon"] },
+  { name: "அரிசிமாவு", unit: "1kg", price: 50, aliases: ["arisi maavu", "rice flour"] },
+  { name: "ரைஸ்", unit: "1kg", price: 65, aliases: ["rice", "arisi"] },
+  { name: "கல்உப்பு", unit: "1kg", price: 10, aliases: ["kal uppu", "rock salt"] },
+  { name: "சால்ட்", unit: "1kg", price: 13, aliases: ["salt", "powder salt", "thool uppu"] },
+  { name: "அஜினா", unit: "1kg", price: 160, aliases: ["ajina", "ajinomoto", "tasting salt"] },
+  { name: "காண்சிப்ஸ்", unit: "1kg", price: 58, aliases: ["corn chips", "chips"] },
+  { name: "நுடுல்ஸ்", unit: "1kg", price: 68, aliases: ["noodles", "noodle"] },
+  { name: "லப்பர்", unit: "1kg", price: 400, aliases: ["rubber", "rubber band"] },
+  { name: "பூரி", unit: "1kg", price: 85, aliases: ["poori", "puri"] },
+  { name: "RB", unit: "1kg", price: 60, aliases: ["rb", "r b"] },
+  { name: "65", unit: "1kg", price: 510, aliases: ["65", "chicken 65", "chilli 65"] },
+  { name: "மிளகு", unit: "1kg", price: 860, aliases: ["milagu", "pepper", "black pepper"] },
+  { name: "சீரகம்", unit: "1kg", price: 360, aliases: ["seeragam", "jeera", "cumin"] },
+  { name: "புளி", unit: "1kg", price: 130, aliases: ["puli", "tamarind"] },
+  { name: "கறிஉப்பு", unit: "1kg", price: 65, aliases: ["kari uppu", "mutton salt"] },
+  { name: "பிளக்பெப்பர்", unit: "1kg", price: 220, aliases: ["black pepper", "black pepper powder"] },
+  { name: "பெப்பர்", unit: "1kg", price: 165, aliases: ["pepper", "white pepper"] },
+  { name: "கஸ்துரி", unit: "1kg", price: 500, aliases: ["kasthuri", "kasuri methi"] },
+  { name: "பூண்டு", unit: "1kg", price: 130, aliases: ["poondhu", "garlic"] },
+  { name: "அரிசி", unit: "1kg", price: 65, aliases: ["arisi", "raw rice", "boiled rice"] },
+  { name: "00", unit: "1kg", price: 240, aliases: ["00", "double zero", "maida 00"] },
+  { name: "கலர்", unit: "1ps", price: 33, aliases: ["color", "food color"] },
+  { name: "காளாண்கப்", unit: "1ps", price: 175, aliases: ["kalaan cup", "mushroom cup"] },
+  { name: "ஸ்பூன்", unit: "1ps", price: 20, aliases: ["spoon", "plastic spoon"] },
+  { name: "கேரிபேக்", unit: "1ps", price: 17, aliases: ["carry bag", "bag"] },
+  { name: "பெரிபேக்", unit: "1ps", price: 32, aliases: ["peri bag", "big bag"] },
+  { name: "ரைஸ்கவர்", unit: "1ps", price: 86, aliases: ["rice cover", "cover"] },
+  { name: "சில்லி", unit: "1ps", price: 27, aliases: ["chilli sauce", "chilli"] },
+  { name: "சோயா", unit: "1ps", price: 27, aliases: ["soya", "soya sauce"] },
+  { name: "தக்காளி", unit: "1ps", price: 40, aliases: ["thakkali", "tomato", "tomato sauce"] },
+  { name: "சோப்பு", unit: "1ps", price: 10, aliases: ["soap", "washing soap"] },
+  { name: "சோப்புதூள்", unit: "1ps", price: 10, aliases: ["soap thool", "washing powder", "detergent"] }
+];
+
+const STORAGE_KEY = 'voice_billing_custom_items_v2';
+let items = [];
+let quantities = [];
+let prices = [];
+
+loadSavedPrices();
+
+// App State
+let voiceLang = 'ta-IN';
+let isListening = false;
+let shouldRestart = false;
+let recognition = null;
+let enableTTS = true;
+
+// Default date
+const today = new Date();
+document.getElementById("billDate").value = String(today.getDate()).padStart(2,'0') + '/' + String(today.getMonth()+1).padStart(2,'0') + '/' + today.getFullYear();
+
+// Register PWA Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(err => console.log("SW Register Fail", err));
+}
+
+// Auto re-sync when navigating back or storage changes
+window.addEventListener('pageshow', () => {
+  loadSavedPrices();
+  renderItems(document.getElementById('searchBox').value);
+});
+window.addEventListener('storage', (e) => {
+  if (e.key === STORAGE_KEY) {
+    loadSavedPrices();
+    renderItems(document.getElementById('searchBox').value);
+  }
+});
+
+// Initial Render
+renderItems();
+
+// ─────────────────────────────────────────────────────────
+// UI Render Functions
+// ─────────────────────────────────────────────────────────
+function renderItems(filterText = '') {
+  const container = document.getElementById('itemList');
+  const term = filterText.toLowerCase().trim();
+  let html = '';
+
+  items.forEach((item, index) => {
+    const matchName = item.name.toLowerCase().includes(term);
+    const matchAlias = item.aliases && item.aliases.some(a => a.toLowerCase().includes(term));
+    if (term && !matchName && !matchAlias) return;
+
+    const qty = quantities[index];
+    const currentPrice = prices[index];
+    html += `
+      <div class="item-row ${qty > 0 ? 'has-qty' : ''}" id="item-row-${index}">
+        <div class="item-info">
+          <div class="item-name">${item.name}</div>
+          <div class="item-meta">
+            <span>${item.unit}</span> • <span class="price-tag">₹${currentPrice}</span>
+          </div>
+        </div>
+        <div class="qty-controls">
+          <button class="btn-qty btn-minus" onclick="changeQty(${index}, -1)">-</button>
+          <input type="number" class="qty-input-field" value="${qty}" min="0" step="any" onchange="setQty(${index}, this.value)">
+          <button class="btn-qty btn-plus" onclick="changeQty(${index}, 1)">+</button>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html || '<div style="text-align:center;padding:20px;color:var(--text-muted)">பொருள் எதுவும் கிடைக்கவில்லை</div>';
+  updateCalculations();
+}
+
+function changeQty(index, delta) {
+  let val = (quantities[index] || 0) + delta;
+  if (val < 0) val = 0;
+  quantities[index] = Math.round(val * 100) / 100;
+  renderItems(document.getElementById('searchBox').value);
+}
+
+function setQty(index, value) {
+  let val = parseFloat(value) || 0;
+  if (val < 0) val = 0;
+  quantities[index] = Math.round(val * 100) / 100;
+  updateCalculations();
+}
+
+function updateCalculations() {
+  let subtotal = 0;
+  items.forEach((item, i) => {
+    subtotal += (quantities[i] || 0) * prices[i];
+  });
+
+  const oldBal = parseFloat(document.getElementById('oldBalance').value) || 0;
+  const paid = parseFloat(document.getElementById('amountGiven').value) || 0;
+  const grandTotal = subtotal + oldBal;
+  const balanceDue = grandTotal - paid;
+
+  document.getElementById('mobileGrandTotal').textContent = '₹' + grandTotal.toFixed(2);
+  document.getElementById('mobileDueInfo').textContent = 'பாக்கி: ₹' + balanceDue.toFixed(2);
+}
+
+function clearAll() {
+  if (quantities.some(q => q > 0) || document.getElementById('custName').value || document.getElementById('oldBalance').value) {
+    if (!confirm("அனைத்து பில் விவரங்களையும் ரீசெட் செய்யவா?")) return;
+  }
+  quantities.fill(0);
+  document.getElementById('custName').value = '';
+  document.getElementById('oldBalance').value = '';
+  document.getElementById('amountGiven').value = '';
+  document.getElementById('searchBox').value = '';
+  document.getElementById('dictationText').innerHTML = '🎤 மைக்கை அழுத்தி <strong>முழு பில்லையும் ஒரே தடவையில்</strong> பேசுங்கள்...';
+  renderItems();
+  speakFeedback("பில் ரீசெட் செய்யப்பட்டது");
+}
+
+// ─────────────────────────────────────────────────────────
+// Voice Recognition Controls
+// ─────────────────────────────────────────────────────────
+function toggleVoice() {
+  if (isListening) {
+    shouldRestart = false;
+    stopListening();
+  } else {
+    shouldRestart = true;
+    startListening();
+  }
+}
+
+// Global Session Accumulator for Dictation
+let currentSessionItems = {};
+
+function startListening() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    alert("Speech Recognition is not supported on this browser.");
+    return;
+  }
+
+  if (recognition) { try { recognition.abort(); } catch(e){} }
+
+  // Cancel any ongoing speech synthesis so it won't interrupt recording
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+  recognition = new SR();
+  recognition.lang = voiceLang;
+  recognition.interimResults = true;
+  recognition.maxAlternatives = 5;
+  recognition.continuous = true;
+
+  // Reset current session tracking
+  currentSessionItems = {};
+
+  recognition.onstart = () => {
+    isListening = true;
+    document.getElementById('fabMic').classList.add('listening');
+    document.getElementById('statusBadge').classList.add('listening');
+    document.getElementById('statusText').textContent = 'பதிவு செய்கிறது...';
+    document.getElementById('dictationText').innerHTML = '👂 <span style="color:#34d399">பதிவாகிறது... உங்கள் அனைத்து பொருட்களையும் பேசி முடியுங்கள்...</span>';
+  };
+
+  recognition.onresult = (e) => {
+    let combinedText = '';
+    for (let i = 0; i < e.results.length; ++i) {
+      combinedText += ' ' + e.results[i][0].transcript;
+    }
+
+    combinedText = combinedText.trim();
+    if (combinedText) {
+      // Parse silently in real-time without speaking until dictation ends
+      parseSimultaneousVoiceStream(combinedText, false);
+    }
+  };
+
+  recognition.onerror = (e) => {
+    isListening = false;
+    resetMicUI();
+
+    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+      const isFile = location.protocol === 'file:' || location.protocol === 'content:';
+      let msg = `❌ <strong>மைக் அணுகல் தேவை (Microphone Blocked)</strong><br>`;
+      if (isFile) {
+        msg += `<small style="font-size:11px">💡 <strong>Netlify</strong>-ல் இந்த HTML கோப்பை பதிவேற்றி HTTPS URL மூலம் திறக்கவும்.</small>`;
+      } else {
+        msg += `<small style="font-size:11px">💡 பிரவுசர் அமைப்பில் மைக் அனுமதியை (Microphone Permission) Allow செய்யவும்.</small>`;
+      }
+      document.getElementById('dictationText').innerHTML = msg;
+    }
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    resetMicUI();
+
+    // ONLY SPEAK OUT AFTER ALL READINGS ARE COMPLETED!
+    triggerFinalReadoutSummary();
+  };
+
+  try { recognition.start(); } catch(e){}
+}
+
+function stopListening() {
+  isListening = false;
+  shouldRestart = false;
+  if (recognition) { try { recognition.stop(); } catch(e){} }
+  resetMicUI();
+  // Speak out after user stops mic
+  triggerFinalReadoutSummary();
+}
+
+function resetMicUI() {
+  document.getElementById('fabMic').classList.remove('listening');
+  document.getElementById('statusBadge').classList.remove('listening');
+  document.getElementById('statusText').textContent = 'தயார் (Ready)';
+}
+
+// ─────────────────────────────────────────────────────────
+// Finest Multi-Item Streaming Tokenizer Engine
+// ─────────────────────────────────────────────────────────
+function parseSimultaneousVoiceStream(rawText, isFinal) {
+  const t = rawText.toLowerCase().trim();
+  if (!t) return;
+
+  // Sorted list of all item names & aliases (longest first for precise matching)
+  let aliasMap = [];
+  items.forEach((item, index) => {
+    aliasMap.push({ term: item.name.toLowerCase(), index });
+    if (item.aliases) {
+      item.aliases.forEach(a => aliasMap.push({ term: a.toLowerCase(), index }));
+    }
+  });
+  aliasMap.sort((a, b) => b.term.length - a.term.length);
+
+  let sessionSummary = [];
+  let nameFound = null;
+  let paidFound = null;
+
+  // 1. Extract Customer Name: "பெயர் முருகன்" / "name Kumar"
+  const nameM = t.match(/(?:பெயர்|வாடிக்கையாளர்|name|customer)\s+([a-zA-Z\u0B80-\u0BFF]+)/i);
+  if (nameM) {
+    nameFound = nameM[1].trim();
+    document.getElementById('custName').value = nameFound;
+  }
+
+  // 2. Extract Old Balance: "பழைய பாக்கி 200"
+  const oldBalM = t.match(/(?:பழைய பாக்கி|old balance)\s+(\d+(?:\.\d+)?)/i);
+  if (oldBalM) {
+    document.getElementById('oldBalance').value = parseFloat(oldBalM[1]);
+  }
+
+  // 3. Extract Amount Paid: "வரவு 1000"
+  const paidM = t.match(/(?:வரவு|paid|cash|received)\s+(\d+(?:\.\d+)?)/i);
+  if (paidM) {
+    paidFound = parseFloat(paidM[1]);
+    document.getElementById('amountGiven').value = paidFound;
+  }
+
+  // 4. Tokenizer: Split into phrases and match ONLY explicitly mentioned items with word boundaries
+  const phrases = t.split(/(?:,|\.|\bமற்றும்\b|\bஅப்புறம்\b|\bஅப்புறமா\b|\bஅடுத்து\b|\band\b|\bthen\b)/i);
+
+  phrases.forEach(phrase => {
+    const p = phrase.trim();
+    if (!p || p.length < 2) return;
+
+    if (/(?:பெயர்|வாடிக்கையாளர்|name|customer|பழைய பாக்கி|old balance|வரவு|paid|cash|received)/i.test(p)) return;
+
+    let matchedItemIndex = -1;
+    let matchedTerm = '';
+    let highestScore = 0;
+
+    aliasMap.forEach(entry => {
+      const term = entry.term;
+      const score = scorePhraseMatch(p, term);
+      if (score > highestScore) {
+        highestScore = score;
+        matchedItemIndex = entry.index;
+        matchedTerm = term;
+      }
+    });
+
+    if (matchedItemIndex !== -1 && highestScore >= 60) {
+      const itemUnit = items[matchedItemIndex].unit;
+      const qty = extractQtyFromPhrase(p, matchedTerm, itemUnit);
+
+      if (qty !== null && !isNaN(qty) && qty > 0) {
+        quantities[matchedItemIndex] = qty;
+        currentSessionItems[matchedItemIndex] = {
+          name: items[matchedItemIndex].name,
+          qty,
+          unit: items[matchedItemIndex].unit
+        };
+      }
+    }
+  });
+
+  // Render items live without speech
+  renderItems(document.getElementById('searchBox').value);
+
+  // Display dictation progress banner
+  const activeKeys = Object.keys(currentSessionItems);
+  let logHTML = `🎙️ <strong>வாசித்துக்கொண்டிருக்கிறது...</strong><br>💬 "${t}"<br>`;
+  if (activeKeys.length > 0) {
+    logHTML += `✅ <strong>${activeKeys.length} பொருட்கள் சரியாக சேர்க்கப்பட்டன:</strong><br>` +
+      activeKeys.map(k => `<span class="batch-tag">${currentSessionItems[k].name}: ${currentSessionItems[k].qty}${currentSessionItems[k].unit}</span>`).join(' ');
+  }
+
+  document.getElementById('dictationText').innerHTML = logHTML;
+}
+
+// Word boundary matching to score item names cleanly
+function scorePhraseMatch(phrase, term) {
+  const p = phrase.toLowerCase();
+  const t = term.toLowerCase();
+
+  if (p === t) return 100;
+
+  // Exact word boundary matching (avoids matching 'மிளகாய்' inside 'மிதூள்' or 'சில்லி')
+  const escaped = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const wordRegex = new RegExp(`(?:^|\\s)${escaped}(?:$|\\s|\\d)`, 'i');
+  if (wordRegex.test(p)) return 90;
+
+  if (p.includes(t) && t.length >= 4) return 70;
+  return 0;
+}
+
+// Extract Quantity from phrase specifically
+function extractQtyFromPhrase(phrase, matchedTerm, itemUnit) {
+  const p = phrase.toLowerCase();
+
+  if (p.includes('அரை')) return 0.5;
+  if (p.includes('கால்')) return 0.25;
+  if (p.includes('முக்கால்')) return 0.75;
+  if (p.includes('ஒன்றரை')) return 1.5;
+  if (p.includes('இரண்டரை')) return 2.5;
+
+  const gramMatch = p.match(/(\d+(?:\.\d+)?)\s*(?:gram|grams|g|gm|gms|கிராம்|க்ராம்|கிராமங்கள்|க்ராம்கள்)/i);
+  if (gramMatch) return parseFloat(gramMatch[1]) / 1000;
+
+  const kgMatch = p.match(/(\d+(?:\.\d+)?)\s*(?:kg|kilo|கிலோ)/i);
+  if (kgMatch) return parseFloat(kgMatch[1]);
+
+  const numMatch = p.match(/(\d+(?:\.\d+)?)/);
+  if (numMatch) {
+    const val = parseFloat(numMatch[1]);
+    if (isNaN(val) || val <= 0) return 1;
+    if (val >= 50 && itemUnit === '1kg') return val / 1000;
+    return val;
+  }
+
+  return 1;
+}
+
+// Read Out Loud ONLY AFTER Dictation is Finished
+function triggerFinalReadoutSummary() {
+  const activeKeys = Object.keys(currentSessionItems);
+  if (activeKeys.length === 0 && !document.getElementById('custName').value) return;
+
+  const itemListText = activeKeys.map(k => formatItemSpeechText(currentSessionItems[k], voiceLang));
+  const custName = document.getElementById('custName').value;
+  
+  // Calculate total
+  let grandTotal = 0;
+  items.forEach((item, i) => grandTotal += (quantities[i] || 0) * prices[i]);
+  const oldBal = parseFloat(document.getElementById('oldBalance').value) || 0;
+  grandTotal += oldBal;
+
+  let readoutMessage = '';
+  if (voiceLang === 'ta-IN') {
+    readoutMessage = `வாசிப்பு நிறைவடைந்தது. `;
+    if (itemListText.length > 0) {
+      readoutMessage += `சேர்க்கப்பட்ட பொருட்கள்: ${itemListText.join(', ')}. `;
+    }
+    if (custName) readoutMessage += `வாடிக்கையாளர் பெயர் ${custName}. `;
+    readoutMessage += `மொத்த தொகை ${Math.round(grandTotal)} ரூபாய்.`;
+  } else {
+    readoutMessage = `Dictation complete. `;
+    if (itemListText.length > 0) {
+      readoutMessage += `Added items: ${itemListText.join(', ')}. `;
+    }
+    if (custName) readoutMessage += `Customer name ${custName}. `;
+    readoutMessage += `Total amount ${Math.round(grandTotal)} rupees.`;
+  }
+
+  document.getElementById('dictationText').innerHTML = `✅ <strong>வாசிப்பு நிறைவடைந்தது!</strong><br>🔊 ${readoutMessage}`;
+
+  // Speak out out loud now that readings are done
+  if (enableTTS && 'speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const msg = new SpeechSynthesisUtterance(readoutMessage);
+    msg.lang = voiceLang;
+    msg.rate = 0.95;
+    window.speechSynthesis.speak(msg);
+  }
+}
+
+// Format item name and quantity cleanly for natural speech read-back
+function formatItemSpeechText(itemObj, lang) {
+  const name = itemObj.name;
+  const qty = itemObj.qty;
+  const unit = itemObj.unit;
+
+  if (unit === '1ps') {
+    return lang === 'ta-IN' ? `${name} ${qty} பீஸ்` : `${name} ${qty} pieces`;
+  }
+
+  // Gram Conversions for fractional quantities
+  if (qty === 0.5) return lang === 'ta-IN' ? `${name} 500 கிராம்` : `${name} 500 grams`;
+  if (qty === 0.25) return lang === 'ta-IN' ? `${name} 250 கிராம்` : `${name} 250 grams`;
+  if (qty === 0.75) return lang === 'ta-IN' ? `${name} 750 கிராம்` : `${name} 750 grams`;
+  if (qty < 1 && qty > 0) {
+    const grams = Math.round(qty * 1000);
+    return lang === 'ta-IN' ? `${name} ${grams} கிராம்` : `${name} ${grams} grams`;
+  }
+
+  return lang === 'ta-IN' ? `${name} ${qty} கிலோ` : `${name} ${qty} kg`;
+}
+
+// Helper to convert numbers, grams, and Tamil fractions into numeric quantities
+function extractQtyFromMatch(numStr, unitStr, fractionStr, itemUnit = '1kg') {
+  if (fractionStr) {
+    if (fractionStr === 'அரை') return 0.5;
+    if (fractionStr === 'கால்') return 0.25;
+    if (fractionStr === 'முக்கால்') return 0.75;
+    if (fractionStr === 'ஒன்றரை') return 1.5;
+    if (fractionStr === 'இரண்டரை') return 2.5;
+  }
+
+  if (numStr) {
+    let val = parseFloat(numStr);
+    if (isNaN(val) || val <= 0) return null;
+
+    if (unitStr) {
+      const u = unitStr.toLowerCase().trim();
+      // Match ALL English & Tamil gram variations: g, gm, gms, gram, grams, கிராம், க்ராம், கிராமம், க்ராமம்
+      if (u === 'g' || u === 'gm' || u === 'gms' || u === 'gram' || u === 'grams' || u.includes('கிராம்') || u.includes('க்ராம்') || u.includes('கிராம')) {
+        return val / 1000;
+      }
+      if (u === 'kg' || u === 'kilo' || u.includes('கிலோ')) {
+        return val;
+      }
+    }
+
+    // Heuristic: If quantity >= 50 (e.g. 50, 100, 200, 250, 500, 750) and item unit is 1kg, it is grams!
+    if (val >= 50 && itemUnit === '1kg') {
+      return val / 1000;
+    }
+
+    return val;
+  }
+  return null;
+}
+
+// Function to repeat all items and quantities out loud via TTS
+function repeatBillSummaryAudio(addedItems, name, paid) {
+  if (!enableTTS || !('speechSynthesis' in window)) return;
+
+  let speechText = '';
+  if (voiceLang === 'ta-IN') {
+    if (addedItems && addedItems.length > 0) {
+      speechText += `சேர்க்கப்பட்ட பொருட்கள்: ${addedItems.join(', ')}. `;
+    }
+    if (name) speechText += `வாடிக்கையாளர் பெயர் ${name}. `;
+    
+    // Calculate current net total
+    let grandTotal = 0;
+    items.forEach((item, i) => grandTotal += (quantities[i] || 0) * prices[i]);
+    const oldBal = parseFloat(document.getElementById('oldBalance').value) || 0;
+    grandTotal += oldBal;
+
+    speechText += `மொத்த தொகை ${Math.round(grandTotal)} ரூபாய்.`;
+  } else {
+    if (addedItems && addedItems.length > 0) {
+      speechText += `Items added: ${addedItems.join(', ')}. `;
+    }
+    if (name) speechText += `Customer name ${name}. `;
+    let grandTotal = 0;
+    items.forEach((item, i) => grandTotal += (quantities[i] || 0) * prices[i]);
+    const oldBal = parseFloat(document.getElementById('oldBalance').value) || 0;
+    grandTotal += oldBal;
+
+    speechText += `Total amount ${Math.round(grandTotal)} rupees.`;
+  }
+
+  window.speechSynthesis.cancel();
+  const msg = new SpeechSynthesisUtterance(speechText);
+  msg.lang = voiceLang;
+  msg.rate = 0.95; // Speech rate comfortable for shopkeeper
+  window.speechSynthesis.speak(msg);
+}
+
+// Sub-parser for individual items and quantity (handles grams, Tamil fractions, numbers)
+function parseItemAndQtyFromText(spokenText) {
+  let text = spokenText.toLowerCase();
+  let qty = null;
+
+  // Gram Conversions: "500 gram" / "500g" / "500 கிராம்" -> 0.5kg
+  const gramMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:gram|grams|g|கிராம்)/i);
+  if (gramMatch) {
+    const grams = parseFloat(gramMatch[1]);
+    qty = grams / 1000;
+    text = text.replace(gramMatch[0], '').trim();
+  }
+
+  // Tamil Fraction Conversions
+  if (qty === null) {
+    if (text.includes('அரை கிலோ') || text.includes('அரை')) {
+      qty = 0.5; text = text.replace('அரை கிலோ','').replace('அரை','').trim();
+    } else if (text.includes('கால் கிலோ') || text.includes('கால்')) {
+      qty = 0.25; text = text.replace('கால் கிலோ','').replace('கால்','').trim();
+    } else if (text.includes('முக்கால் கிலோ') || text.includes('முக்கால்')) {
+      qty = 0.75; text = text.replace('முக்கால் கிலோ','').replace('முக்கால்','').trim();
+    } else if (text.includes('ஒன்றரை')) {
+      qty = 1.5; text = text.replace('ஒன்றரை','').trim();
+    }
+  }
+
+  // Number Extraction
+  if (qty === null) {
+    const numMatch = text.match(/(\d+(?:[.,]\d+)?)/);
+    if (numMatch) {
+      qty = parseFloat(numMatch[1].replace(',','.'));
+      text = text.replace(numMatch[0], '').trim();
+    }
+  }
+
+  // Default quantity 1 if item named without quantity
+  if (qty === null || isNaN(qty) || qty <= 0) qty = 1;
+
+  // Find best matching item
+  const idx = findBestItemMatch(text);
+  if (idx !== -1) {
+    return { idx, qty };
+  }
+  return null;
+}
+
+function findBestItemMatch(spoken) {
+  const s = spoken.toLowerCase().trim();
+  if (!s) return -1;
+
+  let bestIdx = -1;
+  let bestScore = 0;
+
+  items.forEach((item, i) => {
+    let score = scoreMatch(item.name.toLowerCase(), s);
+    if (item.aliases) {
+      item.aliases.forEach(alias => {
+        const aliasScore = scoreMatch(alias.toLowerCase(), s);
+        if (aliasScore > score) score = aliasScore;
+      });
+    }
+    if (score > bestScore) {
+      bestScore = score;
+      bestIdx = i;
+    }
+  });
+
+  return bestScore > 20 ? bestIdx : -1;
+}
+
+function scoreMatch(target, spoken) {
+  if (target === spoken) return 100;
+  if (target.includes(spoken) || spoken.includes(target)) {
+    return 60 + Math.min(target.length, spoken.length);
+  }
+  const minLen = Math.min(target.length, spoken.length);
+  let common = 0;
+  for (let i = 0; i < minLen; i++) {
+    if (target[i] === spoken[i]) common++;
+    else break;
+  }
+  return common >= 2 ? common * 10 : 0;
+}
+
+// ─────────────────────────────────────────────────────────
+// Minimal Storage Optimized PDF Generation
+// ─────────────────────────────────────────────────────────
+function formatAlavuPDF(qty, unit) {
+  if (unit === '1ps' || unit === 'ps') {
+    return `${qty}ps`;
+  }
+  if (unit === '1ltr' || unit === 'ltr') {
+    if (qty < 1) return `${Math.round(qty * 1000)}ml`;
+    return `${qty}ltr`;
+  }
+  if (qty < 1) {
+    return `${Math.round(qty * 1000)}g`;
+  } else {
+    return `${qty}kg`;
+  }
+}
+
+function escapeReceiptText(value) {
+  return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
+}
+
+function generatePDF() {
+  const activeItems = [];
+  items.forEach((item, i) => {
+    if (quantities[i] > 0) {
+      activeItems.push({
+        name: item.name, unit: item.unit, price: prices[i],
+        qty: quantities[i], total: quantities[i] * prices[i]
+      });
+    }
+  });
+
+  if (activeItems.length === 0) {
+    alert("பொருட்கள் எதுவும் சேர்க்கப்படவில்லை!");
+    return;
+  }
+
+  const custName = document.getElementById('custName').value || 'Customer';
+  const billDate = document.getElementById('billDate').value || today.toLocaleDateString();
+  const oldBal = parseFloat(document.getElementById('oldBalance').value) || 0;
+  const amountGiven = parseFloat(document.getElementById('amountGiven').value) || 0;
+
+  let subtotal = 0;
+  activeItems.forEach(item => subtotal += item.total);
+  const grandTotal = subtotal + oldBal;
+  const balanceDue = grandTotal - amountGiven;
+
+  const pdfButtons = document.querySelectorAll('#pdfBtn, #pdfBtnMain, .header-pdf-btn');
+  pdfButtons.forEach(b => { b.disabled = true; });
+
+  const previewEl = document.getElementById('billPreview');
+  previewEl.innerHTML = `
+    <div style="text-align:center;margin-bottom:8px;border-bottom:1px solid #333;padding-bottom:5px">
+      <h2 style="font-size:18px;margin:0;color:#000">மளிகை கடை பில் | Malikadai Bill</h2>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:7px;font-size:13px;color:#000">
+      <div><strong>வாடிக்கையாளர்:</strong> ${escapeReceiptText(custName)}</div>
+      <div><strong>தேதி:</strong> ${escapeReceiptText(billDate)}</div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-top:4px">
+      <thead>
+        <tr style="border-bottom:1px solid #444;color:#000">
+          <th style="padding:4px 6px;text-align:left;font-size:13px">#</th>
+          <th style="padding:4px 6px;text-align:left;font-size:13px">பொருள்</th>
+          <th style="padding:4px 6px;text-align:center;font-size:13px">அளவு</th>
+          <th style="padding:4px 6px;text-align:right;font-size:13px">மொத்தம்</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${activeItems.map((item, idx) => `
+          <tr style="border-bottom:1px solid #ddd;color:#000">
+            <td style="padding:4px 6px;font-size:13px">${idx + 1}</td>
+            <td style="padding:4px 6px;font-size:13px"><strong>${escapeReceiptText(item.name)}</strong></td>
+            <td style="padding:4px 6px;text-align:center;font-size:13px;font-weight:bold">${formatAlavuPDF(item.qty, item.unit)}</td>
+            <td style="padding:4px 6px;text-align:right;font-size:13px;font-weight:bold">₹${item.total.toFixed(2)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+
+    <div style="margin-top:9px;width:245px;margin-left:auto;font-size:12px;color:#000">
+      <div style="display:flex;justify-content:space-between;padding:3px 0"><span>மொத்தம்:</span> <span>₹${subtotal.toFixed(2)}</span></div>
+      ${oldBal > 0 ? `<div style="display:flex;justify-content:space-between;padding:2px 0"><span>பழைய பாக்கி:</span> <span>₹${oldBal.toFixed(2)}</span></div>` : ''}
+      <div style="display:flex;justify-content:space-between;font-weight:bold;font-size:14px;border-top:1.5px solid #000;padding-top:4px;margin-top:2px">
+        <span>மொத்த தொகை:</span> <span>₹${grandTotal.toFixed(2)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:3px 0"><span>வரவு (Paid):</span> <span>₹${amountGiven.toFixed(2)}</span></div>
+      <div style="display:flex;justify-content:space-between;font-weight:bold;font-size:14px;color:${balanceDue > 0 ? '#b91c1c' : '#047857'};border-top:1px dashed #aaa;padding-top:4px;margin-top:2px">
+        <span>பாக்கி (Due):</span> <span>₹${balanceDue.toFixed(2)}</span>
+      </div>
+    </div>
+  `;
+
+  html2canvas(previewEl, {
+    // Fixed device-independent capture size; higher screen density must not
+    // make the shared PDF larger. Smaller than the former 1.5x capture.
+    scale: window.COMPACT_RECEIPT_SETTINGS?.captureScale || 1.2,
+    useCORS: true,
+    allowTaint: false,
+    backgroundColor: '#ffffff',
+    onclone: (clonedDoc) => {
+      const clonedPreview = clonedDoc.getElementById('billPreview');
+      if (clonedPreview) {
+        clonedPreview.style.position = 'static';
+        clonedPreview.style.left = '0';
+        clonedPreview.style.top = '0';
+        clonedPreview.style.opacity = '1';
+        clonedPreview.style.visibility = 'visible';
+        clonedPreview.style.display = 'block';
+      }
+    }
+  }).then(async canvas => {
+    const receipt = window.compressReceiptCanvas(canvas);
+    const { imageData: imgData, pdfWidthMm: pdfWidth, pdfHeightMm: pdfHeight } = receipt;
+    const jsPDF = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+    const pdf = new jsPDF({
+      orientation: 'p',
+      unit: 'mm',
+      format: [pdfWidth, pdfHeight],
+      compress: true
+    });
+
+    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+    await window.saveBillPDF(pdf, `Bill_${custName.replace(/[\\/:*?"<>|]+/g, "_").replace(/\s+/g, "_").slice(0, 60)}.pdf`);
+
+    pdfButtons.forEach(b => { b.disabled = false; });
+  }).catch(err => {
+    console.error("PDF Error:", err);
+    alert("PDF உருவாக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும். (Could not create or share PDF.)");
+    pdfButtons.forEach(b => { b.disabled = false; });
+  });
+}
+
+// ─────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────
+// Dynamic Item & Rate Storage Synchronization
+// ─────────────────────────────────────────────────────────
+function loadSavedPrices() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  let loadedItems = [];
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        loadedItems = parsed;
+      }
+    } catch(e){}
+  }
+
+  if (loadedItems.length === 0) {
+    const oldPricesSaved = localStorage.getItem('item_prices_v1');
+    let oldPrices = null;
+    if (oldPricesSaved) {
+      try { oldPrices = JSON.parse(oldPricesSaved); } catch(e){}
+    }
+    loadedItems = DEFAULT_ITEMS.map((item, idx) => ({
+      id: 'def_' + idx,
+      name: item.name,
+      unit: item.unit,
+      price: (oldPrices && oldPrices[idx] !== undefined) ? oldPrices[idx] : item.price,
+      aliases: [...(item.aliases || [])],
+      isCustom: false
+    }));
+  }
+
+  const prevItems = items;
+  const prevQuantities = quantities;
+
+  items = loadedItems;
+  prices = loadedItems.map(i => i.price);
+  quantities = new Array(items.length).fill(0);
+
+  if (prevItems && prevItems.length > 0) {
+    prevItems.forEach((oldItem, oldIdx) => {
+      const newIdx = items.findIndex(n => n.name === oldItem.name);
+      if (newIdx !== -1 && prevQuantities[oldIdx] > 0) {
+        quantities[newIdx] = prevQuantities[oldIdx];
+      }
+    });
+  }
+}
+
+function savePrices() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
+
+function openRateModal() {
+  window.location.href = 'rates.html';
+}
+
+function closeRateModal(e) {
+  if (e && e.target !== document.getElementById('rateModal') && !e.target.classList.contains('btn-save-rates') && !e.target.parentElement.classList.contains('btn-save-rates') && e.target.tagName !== 'I') {
+    return;
+  }
+  document.getElementById('rateModal').classList.remove('active');
+  renderItems(document.getElementById('searchBox').value);
+}
+
+function renderRateItems(filterText = '') {
+  const container = document.getElementById('rateItemList');
+  const term = filterText.toLowerCase().trim();
+  let html = '';
+
+  items.forEach((item, index) => {
+    const matchName = item.name.toLowerCase().includes(term);
+    const matchAlias = item.aliases && item.aliases.some(a => a.toLowerCase().includes(term));
+    if (term && !matchName && !matchAlias) return;
+
+    const currentPrice = prices[index];
+    const isModified = currentPrice !== item.price;
+
+    html += `
+      <div class="rate-row">
+        <div class="item-info">
+          <div class="item-name">${item.name}</div>
+          <div class="item-meta">
+            அலகு: ${item.unit} ${isModified ? `<span style="color:var(--primary); font-weight:600;">(இயல்பு: ₹${item.price})</span>` : ''}
+          </div>
+        </div>
+        <div class="rate-input-box">
+          <span>₹</span>
+          <input type="number" class="rate-field" value="${currentPrice}" min="0" step="any"
+                 oninput="updateSingleRate(${index}, this.value)">
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html || '<div style="text-align:center;padding:20px;color:var(--text-muted)">பொருள் எதுவும் கிடைக்கவில்லை</div>';
+}
+
+function updateSingleRate(index, value) {
+  const val = parseFloat(value);
+  if (!isNaN(val) && val >= 0) {
+    prices[index] = Math.round(val * 100) / 100;
+    savePrices();
+    updateCalculations();
+  }
+}
+
+function resetAllPrices() {
+  if (confirm("அனைத்துப் பொருட்களின் விலைகளையும் இயல்பு நிலைக்கு மாற்றவா? (Reset all rates?)")) {
+    prices = items.map(i => i.price);
+    localStorage.removeItem('item_prices_v1');
+    renderRateItems(document.getElementById('rateSearchBox').value);
+    renderItems(document.getElementById('searchBox').value);
+    speakFeedback("விலைகள் இயல்பு நிலைக்கு மாற்றப்பட்டன");
+  }
+}
+
+// Help & Toolbar Action Handlers
+function openHelpModal() {
+  document.getElementById('helpModal').classList.add('active');
+}
+
+function closeHelpModal(e) {
+  if (e && e.target !== document.getElementById('helpModal') && !e.target.classList.contains('fa-xmark')) return;
+  document.getElementById('helpModal').classList.remove('active');
+}
+
+function toggleLanguage() {
+  const selector = document.getElementById('voiceLanguage');
+  voiceLang = ((selector?.value || voiceLang) === 'ta-IN') ? 'en-IN' : 'ta-IN';
+  if (selector) selector.value = voiceLang;
+  const btn = document.getElementById('langIconBtn');
+  if (voiceLang === 'ta-IN') {
+    btn.innerHTML = `<i class="fa-solid fa-globe"></i>`;
+    speakFeedback("தமிழ் மொழி தேர்ந்தெடுக்கப்பட்டது");
+  } else {
+    btn.innerHTML = `<i class="fa-solid fa-language"></i>`;
+    speakFeedback("English language selected");
+  }
+}
+
+function toggleTTS() {
+  enableTTS = !enableTTS;
+  const btn = document.getElementById('ttsIconBtn');
+  if (enableTTS) {
+    btn.style.opacity = '1';
+    speakFeedback("ஒலி அறிவிப்பு ஆன் செய்யப்பட்டது");
+  } else {
+    btn.style.opacity = '0.5';
+  }
+}
+
+function speakFeedback(text) {
+  if (enableTTS && 'speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = voiceLang;
+    msg.rate = 0.95;
+    window.speechSynthesis.speak(msg);
+  }
+}
+</script>
+</body>
+</html>

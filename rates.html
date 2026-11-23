@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Item & Rate Manager | பொருட்கள் & விலை மேலாண்மை</title>
+<!-- PWA Meta -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<meta name="theme-color" content="#4f46e5">
+
+<!-- Fonts & Icons -->
+
+<style>
+  :root {
+    --primary: #4f46e5;
+    --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    --accent: #10b981;
+    --accent-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --dark: #0f172a;
+    --bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 16px;
+    --shadow: 0 10px 25px -5px rgba(0,0,0,0.06), 0 8px 10px -6px rgba(0,0,0,0.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans Tamil', 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); padding-bottom: 40px; font-size: 16px; line-height: 1.4; min-height: 100vh; }
+
+  /* App Bar */
+  .app-bar {
+    background: var(--primary-gradient); color: white; padding: 14px 18px;
+    box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .app-bar-left { display: flex; align-items: center; gap: 12px; }
+  .btn-back {
+    background: rgba(255,255,255,0.2); color: white; border: none;
+    padding: 8px 14px; border-radius: 20px; font-size: 14px; font-weight: 600;
+    text-decoration: none; display: flex; align-items: center; gap: 6px;
+    backdrop-filter: blur(4px); transition: background 0.2s;
+  }
+  .btn-back:hover { background: rgba(255,255,255,0.3); }
+  .app-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .item-count-badge {
+    background: rgba(255,255,255,0.25); padding: 4px 10px; border-radius: 12px;
+    font-size: 13px; font-weight: 600;
+  }
+
+  .container { max-width: 650px; margin: 0 auto; padding: 14px; display: flex; flex-direction: column; gap: 16px; }
+
+  /* Card Component */
+  .card { background: var(--card-bg); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+  .card-title { font-size: 17px; font-weight: 700; color: var(--dark); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+
+  /* Form Elements */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .full-width { grid-column: span 2; }
+  @media (max-width: 480px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .full-width { grid-column: span 1; }
+  }
+
+  .input-group { display: flex; flex-direction: column; gap: 6px; }
+  .input-group label { font-size: 13px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+  .input-field, .select-field {
+    width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+    font-size: 15px; color: var(--text); outline: none; background: #fafafa; transition: all 0.2s;
+  }
+  .input-field:focus, .select-field:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12); }
+
+  .btn-primary {
+    background: var(--primary-gradient); color: white; border: none; padding: 14px;
+    border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3); transition: transform 0.1s, box-shadow 0.2s;
+  }
+  .btn-primary:active { transform: scale(0.98); }
+
+  /* Search Box */
+  .search-wrapper { position: relative; margin-bottom: 14px; }
+  .search-input { width: 100%; padding: 12px 14px 12px 42px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 15px; }
+  .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+  /* Rate Item List */
+  .item-list { display: flex; flex-direction: column; gap: 10px; max-height: 520px; overflow-y: auto; padding-right: 2px; }
+  .item-card {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px; border: 1.5px solid var(--border); border-radius: 14px; background: white;
+    transition: all 0.2s; position: relative;
+  }
+  .item-card:hover { border-color: #cbd5e1; }
+  .item-card.is-custom { border-left: 4px solid var(--accent); }
+
+  .item-details { flex: 1; min-width: 0; }
+  .item-name-heading { font-weight: 700; font-size: 16px; color: var(--dark); display: flex; align-items: center; gap: 6px; }
+  .custom-tag { background: #d1fae5; color: #047857; font-size: 11px; padding: 2px 6px; border-radius: 6px; font-weight: 600; }
+  .item-subtext { font-size: 12px; color: var(--text-muted); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .rate-edit-box { display: flex; align-items: center; gap: 8px; }
+  .price-input-wrapper {
+    display: flex; align-items: center; background: #f8fafc; border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 4px 8px; transition: border-color 0.2s; width: 110px;
+  }
+  .price-input-wrapper:focus-within { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12); }
+  .price-symbol { font-weight: 700; color: var(--primary); font-size: 15px; margin-right: 4px; }
+  .price-input {
+    width: 100%; border: none; outline: none; font-size: 16px; font-weight: 700;
+    color: var(--dark); background: transparent; text-align: right;
+  }
+
+  .btn-delete {
+    background: #fee2e2; color: var(--danger); border: none; width: 36px; height: 36px;
+    border-radius: 10px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .btn-delete:hover { background: #fca5a5; }
+
+  /* Bottom Actions */
+  .bottom-actions { display: flex; gap: 10px; margin-top: 10px; }
+  .btn-reset {
+    background: #fee2e2; color: var(--danger); border: 1px solid #fca5a5;
+    padding: 12px 18px; border-radius: 12px; font-weight: 700; cursor: pointer;
+    font-size: 14px; flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .btn-done {
+    background: var(--accent-gradient); color: white; border: none;
+    padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer;
+    font-size: 14px; flex: 2; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+
+  /* Toast notification */
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: #0f172a; color: white; padding: 12px 20px; border-radius: 30px;
+    font-size: 14px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    display: flex; align-items: center; gap: 8px; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1000; opacity: 0; pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* Keep the inventory header fully visible on narrow Android screens. */
+  @media (max-width: 380px) {
+    .app-bar { flex-wrap: wrap; gap: 7px; }
+    .app-bar-left { flex-wrap: wrap; min-width: 0; gap: 8px; }
+    .item-count-badge { margin-left: auto; }
+  }
+</style>
+  <script type="module" src="/src/mobile-bridge.js"></script>
+</head>
+<body>
+
+<header class="app-bar">
+  <div class="app-bar-left">
+    <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> பில் பக்கம்</a>
+    <div class="app-title"><i class="fa-solid fa-pen-to-square"></i> விலை & பொருள் மேலாண்மை</div>
+  </div>
+  <div class="item-count-badge" id="totalCountBadge">0 பொருட்கள்</div>
+</header>
+
+<div class="container">
+
+  <!-- Add New Item Card -->
+  <section class="card">
+    <div class="card-title"><i class="fa-solid fa-circle-plus" style="color:var(--primary)"></i> புதிய பொருள் சேர்க்க (Add Item per Kg / Piece)</div>
+    <form id="addItemForm" onsubmit="handleAddItem(event)">
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="newItemName"><i class="fa-solid fa-tag"></i> பொருள் பெயர் (Item Name) *</label>
+          <input type="text" id="newItemName" class="input-field" placeholder="உதா: மஞ்சள் / Turmeric" required>
+        </div>
+        
+        <div class="input-group">
+          <label for="newItemUnit"><i class="fa-solid fa-weight-scale"></i> அளவு அலகு (Unit) *</label>
+          <select id="newItemUnit" class="select-field">
+            <option value="1kg" selected>1kg (கிலோ)</option>
+            <option value="1ps">1ps (பீஸ்)</option>
+            <option value="500g">500g (அரை கிலோ)</option>
+            <option value="250g">250g (கால் கிலோ)</option>
+            <option value="100g">100g (100 கிராம்)</option>
+            <option value="1ltr">1ltr (லிட்டர்)</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="newItemPrice"><i class="fa-solid fa-indian-rupee-sign"></i> விற்பனை விலை (Price per Unit) *</label>
+          <input type="number" id="newItemPrice" class="input-field" placeholder="0.00" min="0" step="any" required>
+        </div>
+
+        <div class="input-group">
+          <label for="newItemAliases"><i class="fa-solid fa-language"></i> குரல் தேடல் பெயர்கள் (Tanglish Aliases)</label>
+          <input type="text" id="newItemAliases" class="input-field" placeholder="உதா: manjal, turmeric, manjal thool">
+        </div>
+
+        <div class="full-width" style="margin-top: 4px;">
+          <button type="submit" class="btn-primary" style="width:100%">
+            <i class="fa-solid fa-plus"></i> புதிய பொருள் சேர் (Add Item)
+          </button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <!-- Items & Rate Editor Card -->
+  <section class="card">
+    <div class="card-title" style="justify-content:space-between">
+      <span><i class="fa-solid fa-list-check" style="color:var(--primary)"></i> பொருட்கள் & விலை பட்டியல்</span>
+      <small style="font-size:12px; color:var(--text-muted); font-weight:normal">விலையை நேரடியாக மாற்றலாம்</small>
+    </div>
+    
+    <div class="search-wrapper">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input type="text" id="searchBox" class="search-input" placeholder="பொருள் பெயர் தேடு... (Search items...)" oninput="renderItemsList(this.value)">
+    </div>
+
+    <div class="item-list" id="itemListContainer"></div>
+
+    <div class="bottom-actions">
+      <button class="btn-reset" onclick="resetToDefaultItems()">
+        <i class="fa-solid fa-rotate-left"></i> இயல்பு நிலை (Reset Defaults)
+      </button>
+      <a href="index.html" class="btn-done">
+        <i class="fa-solid fa-check-double"></i> பில் பக்கத்திற்கு செல்க
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<!-- Toast notification element -->
+<div class="toast" id="toastMsg"><i class="fa-solid fa-circle-check" style="color:#34d399"></i> <span id="toastText"></span></div>
+
+<script>
+// ─────────────────────────────────────────────────────────
+// Master Default Items List
+// ─────────────────────────────────────────────────────────
+const DEFAULT_ITEMS = [
+  { name: "மல்லி", unit: "1kg", price: 180, aliases: ["malli", "coriander", "dhaniya", "malli thool"] },
+  { name: "மிளகாய்", unit: "1kg", price: 280, aliases: ["milagai", "chilli", "red chilli", "milagai thool", "மிளகா"] },
+  { name: "மிதூள்", unit: "1kg", price: 240, aliases: ["mithool", "chilli powder", "milagai podi"] },
+  { name: "கறி", unit: "1kg", price: 425, aliases: ["kari", "mutton", "meat", "kari masala"] },
+  { name: "சிக்கன்", unit: "1kg", price: 325, aliases: ["chicken", "chiken", "chicken masala"] },
+  { name: "கரம்", unit: "1kg", price: 465, aliases: ["garam", "garam masala"] },
+  { name: "கமாவு", unit: "1kg", price: 60, aliases: ["kamavu", "gram flour", "kadalai maavu"] },
+  { name: "பட்டாணி", unit: "1kg", price: 58, aliases: ["pattani", "peas", "green peas"] },
+  { name: "காண்", unit: "1kg", price: 50, aliases: ["corn", "kaon"] },
+  { name: "அரிசிமாவு", unit: "1kg", price: 50, aliases: ["arisi maavu", "rice flour"] },
+  { name: "ரைஸ்", unit: "1kg", price: 65, aliases: ["rice", "arisi"] },
+  { name: "கல்உப்பு", unit: "1kg", price: 10, aliases: ["kal uppu", "rock salt"] },
+  { name: "சால்ட்", unit: "1kg", price: 13, aliases: ["salt", "powder salt", "thool uppu"] },
+  { name: "அஜினா", unit: "1kg", price: 160, aliases: ["ajina", "ajinomoto", "tasting salt"] },
+  { name: "காண்சிப்ஸ்", unit: "1kg", price: 58, aliases: ["corn chips", "chips"] },
+  { name: "நுடுல்ஸ்", unit: "1kg", price: 68, aliases: ["noodles", "noodle"] },
+  { name: "லப்பர்", unit: "1kg", price: 400, aliases: ["rubber", "rubber band"] },
+  { name: "பூரி", unit: "1kg", price: 85, aliases: ["poori", "puri"] },
+  { name: "RB", unit: "1kg", price: 60, aliases: ["rb", "r b"] },
+  { name: "65", unit: "1kg", price: 510, aliases: ["65", "chicken 65", "chilli 65"] },
+  { name: "மிளகு", unit: "1kg", price: 860, aliases: ["milagu", "pepper", "black pepper"] },
+  { name: "சீரகம்", unit: "1kg", price: 360, aliases: ["seeragam", "jeera", "cumin"] },
+  { name: "புளி", unit: "1kg", price: 130, aliases: ["puli", "tamarind"] },
+  { name: "கறிஉப்பு", unit: "1kg", price: 65, aliases: ["kari uppu", "mutton salt"] },
+  { name: "பிளக்பெப்பர்", unit: "1kg", price: 220, aliases: ["black pepper", "black pepper powder"] },
+  { name: "பெப்பர்", unit: "1kg", price: 165, aliases: ["pepper", "white pepper"] },
+  { name: "கஸ்துரி", unit: "1kg", price: 500, aliases: ["kasthuri", "kasuri methi"] },
+  { name: "பூண்டு", unit: "1kg", price: 130, aliases: ["poondhu", "garlic"] },
+  { name: "அரிசி", unit: "1kg", price: 65, aliases: ["arisi", "raw rice", "boiled rice"] },
+  { name: "00", unit: "1kg", price: 240, aliases: ["00", "double zero", "maida 00"] },
+  { name: "கலர்", unit: "1ps", price: 33, aliases: ["color", "food color"] },
+  { name: "காளாண்கப்", unit: "1ps", price: 175, aliases: ["kalaan cup", "mushroom cup"] },
+  { name: "ஸ்பூன்", unit: "1ps", price: 20, aliases: ["spoon", "plastic spoon"] },
+  { name: "கேரிபேக்", unit: "1ps", price: 17, aliases: ["carry bag", "bag"] },
+  { name: "பெரிபேக்", unit: "1ps", price: 32, aliases: ["peri bag", "big bag"] },
+  { name: "ரைஸ்கவர்", unit: "1ps", price: 86, aliases: ["rice cover", "cover"] },
+  { name: "சில்லி", unit: "1ps", price: 27, aliases: ["chilli sauce", "chilli"] },
+  { name: "சோயா", unit: "1ps", price: 27, aliases: ["soya", "soya sauce"] },
+  { name: "தக்காளி", unit: "1ps", price: 40, aliases: ["thakkali", "tomato", "tomato sauce"] },
+  { name: "சோப்பு", unit: "1ps", price: 10, aliases: ["soap", "washing soap"] },
+  { name: "சோப்புதூள்", unit: "1ps", price: 10, aliases: ["soap thool", "washing powder", "detergent"] }
+];
+
+const STORAGE_KEY = 'voice_billing_custom_items_v2';
+let masterItems = [];
+
+// Initialize
+loadItems();
+renderItemsList();
+
+function loadItems() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        masterItems = parsed;
+        return;
+      }
+    } catch(e) { console.error("Error parsing saved items", e); }
+  }
+
+  // Deep clone default items
+  masterItems = DEFAULT_ITEMS.map((item, idx) => ({
+    id: 'def_' + idx,
+    name: item.name,
+    unit: item.unit,
+    price: item.price,
+    defaultPrice: item.price,
+    aliases: [...(item.aliases || [])],
+    isCustom: false
+  }));
+  saveItems();
+}
+
+function saveItems() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(masterItems));
+}
+
+function renderItemsList(filterText = '') {
+  const container = document.getElementById('itemListContainer');
+  const term = filterText.toLowerCase().trim();
+  let html = '';
+
+  document.getElementById('totalCountBadge').textContent = `${masterItems.length} பொருட்கள்`;
+
+  masterItems.forEach((item, index) => {
+    const matchName = item.name.toLowerCase().includes(term);
+    const matchAlias = item.aliases && item.aliases.some(a => a.toLowerCase().includes(term));
+    if (term && !matchName && !matchAlias) return;
+
+    const aliasesText = (item.aliases && item.aliases.length > 0) ? item.aliases.join(', ') : 'இல்லை';
+
+    html += `
+      <div class="item-card ${item.isCustom ? 'is-custom' : ''}">
+        <div class="item-details">
+          <div class="item-name-heading">
+            ${item.name}
+            ${item.isCustom ? '<span class="custom-tag">புதிய பொருள்</span>' : ''}
+          </div>
+          <div class="item-subtext">
+            அலகு: <strong>${item.unit}</strong> | மாற்றுப் பெயர்கள்: ${aliasesText}
+          </div>
+        </div>
+        <div class="rate-edit-box">
+          <div class="price-input-wrapper">
+            <span class="price-symbol">₹</span>
+            <input type="number" class="price-input" value="${item.price}" min="0" step="any"
+                   onchange="updateItemPrice(${index}, this.value)">
+          </div>
+          ${item.isCustom ? `
+            <button class="btn-delete" onclick="deleteCustomItem(${index})" title="பொருளை நீக்கு">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html || '<div style="text-align:center;padding:30px;color:var(--text-muted)">பொருள் எதுவும் கிடைக்கவில்லை</div>';
+}
+
+function updateItemPrice(index, value) {
+  const val = parseFloat(value);
+  if (!isNaN(val) && val >= 0) {
+    masterItems[index].price = Math.round(val * 100) / 100;
+    saveItems();
+    showToast(`"${masterItems[index].name}" விலை ₹${masterItems[index].price} என மாற்றப்பட்டது`);
+  }
+}
+
+function handleAddItem(event) {
+  event.preventDefault();
+  const nameInput = document.getElementById('newItemName');
+  const unitInput = document.getElementById('newItemUnit');
+  const priceInput = document.getElementById('newItemPrice');
+  const aliasesInput = document.getElementById('newItemAliases');
+
+  const name = nameInput.value.trim();
+  const unit = unitInput.value;
+  const price = parseFloat(priceInput.value);
+  const rawAliases = aliasesInput.value.trim();
+
+  if (!name || isNaN(price) || price < 0) {
+    alert("தயவுசெய்து சரியான பொருள் பெயர் மற்றும் விலையை உள்ளிடவும்.");
+    return;
+  }
+
+  // Check duplicate name
+  const existingIdx = masterItems.findIndex(i => i.name.toLowerCase() === name.toLowerCase());
+  if (existingIdx !== -1) {
+    if (confirm(`"${name}" என்ற பொருள் ஏற்கனவே உள்ளது. அதன் விலையை ₹${price} என புதுப்பிக்கவா?`)) {
+      masterItems[existingIdx].price = price;
+      masterItems[existingIdx].unit = unit;
+      if (rawAliases) {
+        const newAliases = rawAliases.split(',').map(a => a.trim().toLowerCase()).filter(a => a);
+        masterItems[existingIdx].aliases = Array.from(new Set([...masterItems[existingIdx].aliases, ...newAliases]));
+      }
+      saveItems();
+      renderItemsList(document.getElementById('searchBox').value);
+      showToast(`"${name}" விவரம் புதுப்பிக்கப்பட்டது!`);
+      document.getElementById('addItemForm').reset();
+    }
+    return;
+  }
+
+  // Process aliases
+  let aliases = [];
+  if (rawAliases) {
+    aliases = rawAliases.split(',').map(a => a.trim().toLowerCase()).filter(a => a);
+  }
+  // Auto-add transliterated/lowercased name as alias
+  aliases.push(name.toLowerCase());
+  aliases = Array.from(new Set(aliases));
+
+  const newItem = {
+    id: 'cust_' + Date.now(),
+    name,
+    unit,
+    price: Math.round(price * 100) / 100,
+    defaultPrice: Math.round(price * 100) / 100,
+    aliases,
+    isCustom: true
+  };
+
+  masterItems.unshift(newItem); // Put newly added item at top
+  saveItems();
+  renderItemsList(document.getElementById('searchBox').value);
+
+  showToast(`"${name}" (${unit} - ₹${price}) வெற்றிகரமாக சேர்க்கப்பட்டது!`);
+  document.getElementById('addItemForm').reset();
+}
+
+function deleteCustomItem(index) {
+  const item = masterItems[index];
+  if (!item) return;
+  if (confirm(`"${item.name}" என்ற புதிய பொருளை நீக்க விரும்புகிறீர்களா?`)) {
+    masterItems.splice(index, 1);
+    saveItems();
+    renderItemsList(document.getElementById('searchBox').value);
+    showToast(`"${item.name}" நீக்கப்பட்டது`);
+  }
+}
+
+function resetToDefaultItems() {
+  if (confirm("அனைத்துப் பொருட்களின் விலைகள் மற்றும் புதிய சேர்ப்புகளை அழித்து இயல்பு நிலைக்கு மாற்றவா?")) {
+    localStorage.removeItem(STORAGE_KEY);
+    loadItems();
+    renderItemsList();
+    showToast("அனைத்து பொருட்களின் விலைகளும் இயல்பு நிலைக்கு மாற்றப்பட்டன");
+  }
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toastMsg');
+  document.getElementById('toastText').textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
