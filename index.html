@@ -165,15 +165,42 @@
 
   .example-pill { background: #f1f5f9; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 12px; font-weight: 500; color: var(--primary); }
 
-  /* Hidden PDF Container - Compact Receipt Format */
+  /* Off-screen receipt: fixed-width, printable layout (original style preserved). */
   #billPreview {
     position: fixed; left: -10000px; top: 0; width: 450px; background: white;
     padding: 16px; font-family: 'Noto Sans Tamil', Arial, sans-serif; color: #000;
     z-index: -9999; opacity: 0; pointer-events: none;
   }
-  #billPreview table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-  #billPreview th { background: #1e293b; color: white; padding: 6px; font-size: 12px; text-align: left; }
-  #billPreview td { padding: 6px; border-bottom: 1px solid #ddd; font-size: 12px; }
+  #billPreview, #billPreview * { box-sizing: border-box; }
+  #billPreview { overflow: hidden; }
+  #billPreview .receipt-customer-row {
+    display: flex; flex-wrap: wrap; justify-content: space-between;
+    gap: 4px 12px; margin-bottom: 12px; font-size: 13px; color: #000;
+  }
+  #billPreview .receipt-customer-row > div {
+    min-width: 0; max-width: 100%; overflow-wrap: anywhere;
+  }
+  #billPreview table {
+    width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 10px;
+  }
+  #billPreview th, #billPreview td {
+    padding: 6px 4px !important; font-size: 12px !important;
+    overflow-wrap: anywhere; word-break: normal; white-space: normal;
+  }
+  #billPreview th { background: #1e293b; color: #fff; }
+  #billPreview td { border-bottom: 1px solid #ddd; }
+  #billPreview th:last-child, #billPreview td:last-child {
+    text-align: right; font-variant-numeric: tabular-nums;
+  }
+  #billPreview .receipt-totals {
+    width: 260px; max-width: 100%; margin: 16px 0 0 auto;
+    font-size: 12px; color: #000;
+  }
+  #billPreview .receipt-totals > div { gap: 8px; }
+  #billPreview .receipt-totals span:first-child { min-width: 0; overflow-wrap: anywhere; }
+  #billPreview .receipt-totals span:last-child {
+    flex-shrink: 0; white-space: nowrap; font-variant-numeric: tabular-nums;
+  }
   /* Rate Editing Styling */
   .btn-rate-open {
     background: rgba(79, 70, 229, 0.1); color: var(--primary); border: 1px solid rgba(79, 70, 229, 0.2);
@@ -442,12 +469,12 @@
 // ─────────────────────────────────────────────────────────
 const DEFAULT_ITEMS = [
   { name: "மல்லி", unit: "1kg", price: 180, aliases: ["malli", "coriander", "dhaniya", "malli thool"] },
-  { name: "மிளகாய்", unit: "1kg", price: 280, aliases: ["milagai", "chilli", "red chilli", "milagai thool", "மிளகா"] },
-  { name: "மிதூள்", unit: "1kg", price: 240, aliases: ["mithool", "chilli powder", "milagai podi"] },
+  { name: "மிளகாய்", unit: "1kg", price: 280, aliases: ["milagai", "chilli", "red chilli", "மிளகா"] },
+  { name: "மிளகாய்த்தூள்", unit: "1kg", price: 240, aliases: ["mithool", "milagaithul", "milagai thul", "milagai thool", "மிளகாய் தூள்", "chilli powder", "milagai podi"] },
   { name: "கறி", unit: "1kg", price: 425, aliases: ["kari", "mutton", "meat", "kari masala"] },
   { name: "சிக்கன்", unit: "1kg", price: 325, aliases: ["chicken", "chiken", "chicken masala"] },
   { name: "கரம்", unit: "1kg", price: 465, aliases: ["garam", "garam masala"] },
-  { name: "கமாவு", unit: "1kg", price: 60, aliases: ["kamavu", "gram flour", "kadalai maavu"] },
+  { name: "கல்லமாவு", unit: "1kg", price: 60, aliases: ["kamavu", "kallamavu", "kalla maavu", "கமாவு", "கல்ல மாவு", "gram flour", "kadalai maavu"] },
   { name: "பட்டாணி", unit: "1kg", price: 58, aliases: ["pattani", "peas", "green peas"] },
   { name: "காண்", unit: "1kg", price: 50, aliases: ["corn", "kaon"] },
   { name: "அரிசிமாவு", unit: "1kg", price: 50, aliases: ["arisi maavu", "rice flour"] },
@@ -937,11 +964,12 @@ function generatePDF() {
       <h2 style="font-size:20px;margin:0;color:#000">🛒 பில் ரசீது</h2>
       <p style="font-size:12px;color:#333;margin:4px 0 0 0">தேதி: ${escapeReceiptText(billDate)}</p>
     </div>
-    <div style="display:flex;justify-content:space-between;margin-bottom:12px;font-size:13px;color:#000">
+    <div class="receipt-customer-row">
       <div><strong>வாடிக்கையாளர்:</strong> ${escapeReceiptText(custName)}</div>
       <div><strong>தேதி:</strong> ${escapeReceiptText(billDate)}</div>
     </div>
-    <table style="width:100%;border-collapse:collapse;margin-top:10px">
+    <table class="receipt-items">
+      <colgroup><col style="width:8%"><col style="width:40%"><col style="width:18%"><col style="width:34%"></colgroup>
       <thead>
         <tr style="background:#1e293b;color:#fff">
           <th style="padding:6px 8px;text-align:left;font-size:13px">#</th>
@@ -962,7 +990,7 @@ function generatePDF() {
       </tbody>
     </table>
 
-    <div style="margin-top:16px;width:260px;margin-left:auto;font-size:12px;color:#000">
+    <div class="receipt-totals">
       <div style="display:flex;justify-content:space-between;padding:3px 0"><span>மொத்தம்:</span> <span>₹${subtotal.toFixed(2)}</span></div>
       ${oldBal > 0 ? `<div style="display:flex;justify-content:space-between;padding:2px 0"><span>பழைய பாக்கி:</span> <span>₹${oldBal.toFixed(2)}</span></div>` : ''}
       <div style="display:flex;justify-content:space-between;font-weight:bold;font-size:14px;border-top:1.5px solid #000;padding-top:4px;margin-top:2px">
@@ -980,6 +1008,7 @@ function generatePDF() {
     useCORS: true,
     allowTaint: true,
     backgroundColor: '#ffffff',
+    windowWidth: Math.max(600, previewEl.scrollWidth + 32),
     onclone: (clonedDoc) => {
       const clonedPreview = clonedDoc.getElementById('billPreview');
       if (clonedPreview) {
@@ -994,16 +1023,22 @@ function generatePDF() {
   }).then(async canvas => {
     const imgData = canvas.toDataURL('image/jpeg', 0.80);
     const jsPDF = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+    // Keep the familiar 90 mm receipt. Use 2 mm margins so amounts never touch the edge.
+    // Explicitly choose orientation: jsPDF otherwise swaps the dimensions of short bills,
+    // cropping the right-hand columns when only a few products are present.
     const pdfWidth = 90;
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    const margin = 2;
+    const imageWidth = pdfWidth - margin * 2;
+    const imageHeight = (canvas.height * imageWidth) / canvas.width;
+    const pdfHeight = imageHeight + margin * 2;
     const pdf = new jsPDF({
-      orientation: 'p',
+      orientation: pdfHeight >= pdfWidth ? 'portrait' : 'landscape',
       unit: 'mm',
       format: [pdfWidth, pdfHeight],
       compress: true
     });
 
-    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+    pdf.addImage(imgData, 'JPEG', margin, margin, imageWidth, imageHeight, undefined, 'FAST');
     await window.saveBillPDF(pdf, `Bill_${custName.replace(/[\\/:*?"<>|]+/g, "_").replace(/\s+/g, "_").slice(0, 60)}.pdf`);
 
     pdfButtons.forEach(b => { b.disabled = false; });
@@ -1017,6 +1052,45 @@ function generatePDF() {
 // ─────────────────────────────────────────────────────────
 // Dynamic Item & Rate Storage Synchronization
 // ─────────────────────────────────────────────────────────
+// Rename the legacy default item in existing on-device storage without resetting user prices.
+function migrateMilagaiThoolName(catalog) {
+  if (!Array.isArray(catalog)) return false;
+  let changed = false;
+  for (const product of catalog) {
+    if (!product || typeof product !== 'object') continue;
+    if (product.name === 'மிதூள்' && product.isCustom !== true) {
+      product.name = 'மிளகாய்த்தூள்';
+      const names = Array.isArray(product.aliases) ? product.aliases : [];
+      product.aliases = [...new Set([...names, 'milagaithul', 'milagai thul', 'milagai thool', 'மிளகாய் தூள்'])];
+      changed = true;
+    }
+    // The powder phrase must not resolve to the separate whole-chilli item.
+    if (product.name === 'மிளகாய்' && Array.isArray(product.aliases) && product.aliases.includes('milagai thool')) {
+      product.aliases = product.aliases.filter(value => value !== 'milagai thool');
+      changed = true;
+    }
+  }
+  return changed;
+}
+
+
+// Update the previous Tamil item label on devices that already saved rates.
+// This preserves the product's ID, unit, customized price, and other data.
+function migrateKallaMaavuName(catalog) {
+  if (!Array.isArray(catalog)) return false;
+  let changed = false;
+  for (const product of catalog) {
+    if (!product || typeof product !== 'object') continue;
+    if (product.name === 'கமாவு' && product.isCustom !== true) {
+      product.name = 'கல்லமாவு';
+      const existing = Array.isArray(product.aliases) ? product.aliases : [];
+      product.aliases = [...new Set([...existing, 'kamavu', 'kallamavu', 'kalla maavu', 'கல்ல மாவு'])];
+      changed = true;
+    }
+  }
+  return changed;
+}
+
 function loadSavedPrices() {
   const saved = localStorage.getItem(STORAGE_KEY);
   let loadedItems = [];
@@ -1043,6 +1117,12 @@ function loadSavedPrices() {
       aliases: [...(item.aliases || [])],
       isCustom: false
     }));
+  }
+
+  const milagaiChanged = migrateMilagaiThoolName(loadedItems);
+  const maavuChanged = migrateKallaMaavuName(loadedItems);
+  if (milagaiChanged || maavuChanged) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(loadedItems));
   }
 
   const prevItems = items;

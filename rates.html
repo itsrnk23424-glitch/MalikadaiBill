@@ -242,12 +242,12 @@
 // ─────────────────────────────────────────────────────────
 const DEFAULT_ITEMS = [
   { name: "மல்லி", unit: "1kg", price: 180, aliases: ["malli", "coriander", "dhaniya", "malli thool"] },
-  { name: "மிளகாய்", unit: "1kg", price: 280, aliases: ["milagai", "chilli", "red chilli", "milagai thool", "மிளகா"] },
-  { name: "மிதூள்", unit: "1kg", price: 240, aliases: ["mithool", "chilli powder", "milagai podi"] },
+  { name: "மிளகாய்", unit: "1kg", price: 280, aliases: ["milagai", "chilli", "red chilli", "மிளகா"] },
+  { name: "மிளகாய்த்தூள்", unit: "1kg", price: 240, aliases: ["mithool", "milagaithul", "milagai thul", "milagai thool", "மிளகாய் தூள்", "chilli powder", "milagai podi"] },
   { name: "கறி", unit: "1kg", price: 425, aliases: ["kari", "mutton", "meat", "kari masala"] },
   { name: "சிக்கன்", unit: "1kg", price: 325, aliases: ["chicken", "chiken", "chicken masala"] },
   { name: "கரம்", unit: "1kg", price: 465, aliases: ["garam", "garam masala"] },
-  { name: "கமாவு", unit: "1kg", price: 60, aliases: ["kamavu", "gram flour", "kadalai maavu"] },
+  { name: "கல்லமாவு", unit: "1kg", price: 60, aliases: ["kamavu", "kallamavu", "kalla maavu", "கமாவு", "கல்ல மாவு", "gram flour", "kadalai maavu"] },
   { name: "பட்டாணி", unit: "1kg", price: 58, aliases: ["pattani", "peas", "green peas"] },
   { name: "காண்", unit: "1kg", price: 50, aliases: ["corn", "kaon"] },
   { name: "அரிசிமாவு", unit: "1kg", price: 50, aliases: ["arisi maavu", "rice flour"] },
@@ -291,6 +291,45 @@ let masterItems = [];
 loadItems();
 renderItemsList();
 
+// Rename the legacy default item in existing on-device storage without resetting user prices.
+function migrateMilagaiThoolName(catalog) {
+  if (!Array.isArray(catalog)) return false;
+  let changed = false;
+  for (const product of catalog) {
+    if (!product || typeof product !== 'object') continue;
+    if (product.name === 'மிதூள்' && product.isCustom !== true) {
+      product.name = 'மிளகாய்த்தூள்';
+      const names = Array.isArray(product.aliases) ? product.aliases : [];
+      product.aliases = [...new Set([...names, 'milagaithul', 'milagai thul', 'milagai thool', 'மிளகாய் தூள்'])];
+      changed = true;
+    }
+    // The powder phrase must not resolve to the separate whole-chilli item.
+    if (product.name === 'மிளகாய்' && Array.isArray(product.aliases) && product.aliases.includes('milagai thool')) {
+      product.aliases = product.aliases.filter(value => value !== 'milagai thool');
+      changed = true;
+    }
+  }
+  return changed;
+}
+
+
+// Update the previous Tamil item label on devices that already saved rates.
+// This preserves the product's ID, unit, customized price, and other data.
+function migrateKallaMaavuName(catalog) {
+  if (!Array.isArray(catalog)) return false;
+  let changed = false;
+  for (const product of catalog) {
+    if (!product || typeof product !== 'object') continue;
+    if (product.name === 'கமாவு' && product.isCustom !== true) {
+      product.name = 'கல்லமாவு';
+      const existing = Array.isArray(product.aliases) ? product.aliases : [];
+      product.aliases = [...new Set([...existing, 'kamavu', 'kallamavu', 'kalla maavu', 'கல்ல மாவு'])];
+      changed = true;
+    }
+  }
+  return changed;
+}
+
 function loadItems() {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
@@ -298,6 +337,9 @@ function loadItems() {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
         masterItems = parsed;
+        const milagaiChanged = migrateMilagaiThoolName(masterItems);
+        const maavuChanged = migrateKallaMaavuName(masterItems);
+        if (milagaiChanged || maavuChanged) saveItems();
         return;
       }
     } catch(e) { console.error("Error parsing saved items", e); }

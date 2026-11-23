@@ -1,7 +1,7 @@
 {
   "name": "malikadai-bill-android",
   "private": true,
-  "version": "2.4.0",
+  "version": "2.7.0",
   "type": "module",
   "description": "Android-first Tamil/Tanglish/English voice grocery billing; restored original PDF receipt.",
   "scripts": {
